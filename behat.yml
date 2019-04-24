@@ -4,7 +4,8 @@ default:
             contexts:
                 - FeatureContext:
                     kernel: '@kernel'
-
+                - ExportProductsContext:
+                      kernel: '@kernel'
     extensions:
         Behat\Symfony2Extension:
             kernel:
