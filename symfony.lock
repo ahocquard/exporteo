@@ -27,6 +27,9 @@
     "container-interop/container-interop": {
         "version": "1.2.0"
     },
+    "donatj/mock-webserver": {
+        "version": "v2.0.0"
+    },
     "psr/cache": {
         "version": "1.0.1"
     },
@@ -38,6 +41,9 @@
     },
     "psr/simple-cache": {
         "version": "1.0.1"
+    },
+    "ralouphie/getallheaders": {
+        "version": "2.0.5"
     },
     "symfony/cache": {
         "version": "v4.2.7"
