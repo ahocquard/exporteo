@@ -24,17 +24,50 @@
     "behat/transliterator": {
         "version": "v1.2.0"
     },
+    "concurrent-php/async-api": {
+        "version": "dev-master"
+    },
+    "concurrent-php/http": {
+        "version": "dev-master"
+    },
     "container-interop/container-interop": {
         "version": "1.2.0"
     },
     "donatj/mock-webserver": {
         "version": "v2.0.0"
     },
+    "nyholm/psr7": {
+        "version": "1.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "1.0",
+            "ref": "5e29a795c9996269c4cea2e87eeb3052c33cf98e"
+        },
+        "files": [
+            "config/packages/nyholm_psr7.yaml"
+        ]
+    },
+    "php-http/message-factory": {
+        "version": "1.0-dev"
+    },
     "psr/cache": {
         "version": "1.0.1"
     },
     "psr/container": {
         "version": "1.0.0"
+    },
+    "psr/http-client": {
+        "version": "1.0.x-dev"
+    },
+    "psr/http-factory": {
+        "version": "1.0.x-dev"
+    },
+    "psr/http-message": {
+        "version": "1.0.x-dev"
+    },
+    "psr/http-server-handler": {
+        "version": "1.0.x-dev"
     },
     "psr/log": {
         "version": "1.1.0"
