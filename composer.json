@@ -21,7 +21,8 @@
     "require-dev": {
         "behat/behat": "^3.5",
         "behat/symfony2-extension": "^2.1",
-        "donatj/mock-webserver": "^2.0"
+        "donatj/mock-webserver": "^2.0",
+        "phpunit/phpunit": "^8"
     },
     "config": {
         "preferred-install": {
