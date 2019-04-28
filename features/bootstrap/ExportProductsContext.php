@@ -4,9 +4,7 @@
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-use Akeneo\Pim\ApiClient\Api\ProductApi;
 use Behat\Behat\Context\Context;
-use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\PyStringNode;
 use donatj\MockWebServer\MockWebServer;
 use donatj\MockWebServer\Response;

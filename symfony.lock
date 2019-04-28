@@ -1,4 +1,7 @@
 {
+    "akeneo/api-php-client": {
+        "version": "dev-master"
+    },
     "behat/behat": {
         "version": "v3.5.0"
     },
@@ -48,7 +51,19 @@
             "config/packages/nyholm_psr7.yaml"
         ]
     },
+    "php-http/discovery": {
+        "version": "1.6.1"
+    },
+    "php-http/httplug": {
+        "version": "2.0.x-dev"
+    },
     "php-http/message-factory": {
+        "version": "1.0-dev"
+    },
+    "php-http/multipart-stream-builder": {
+        "version": "1.1-dev"
+    },
+    "php-http/promise": {
         "version": "1.0-dev"
     },
     "psr/cache": {
@@ -80,9 +95,6 @@
     },
     "symfony/cache": {
         "version": "v4.2.7"
-    },
-    "symfony/class-loader": {
-        "version": "v3.4.26"
     },
     "symfony/config": {
         "version": "v4.2.7"
