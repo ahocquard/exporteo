@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace App\Application;
 
 use Akeneo\Pim\ApiClient\AkeneoPimClientBuilder;
-use function Concurrent\all;
+use Akeneo\Pim\ApiClient\Pagination\Page;
+use Akeneo\Pim\ApiClient\Pagination\PageInterface;
 use Concurrent\Http\HttpClient;
 use Concurrent\Http\HttpClientConfig;
 use Concurrent\Task;
 use Concurrent\Timer;
+use League\Csv\Writer;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use function Concurrent\all;
+use Symfony\Component\Filesystem\Filesystem;
 
 final class ExportProductsToCsvCommandHandler
 {
@@ -32,21 +36,37 @@ final class ExportProductsToCsvCommandHandler
             $command->password()
         );
 
-        $attributePage = $client->getAttributeApi()->listPerPage(3);
+        $filesystem = new Filesystem();
+        $temporaryFilePath = $filesystem->tempnam(__DIR__. '/../../', 'exporteo_json_products_');
+        $writer = Writer::createFromPath($temporaryFilePath);
+        //$writer->setEnclosure(' ');
+        $writer->insertOne(['identifier', 'categories']);
+
+        $productPage = $client->getProductApi()->listPerPage(100);
         $tasks = [];
-        do {
-            var_dump('Request');
 
-            $tasks[] = Task::async(function() use ($attributePage){
-                $timer = new Timer(300);
-                $timer->awaitTimeout();
+        while($productPage->hasNextPage()) {
+            var_dump('request');
 
-                var_dump('Consumer');
-                $timer->awaitTimeout();
-            });
-
-        } while ($attributePage->hasNextPage() && $attributePage = $attributePage->getNextPage());
+            $transformAndWriteToCSV = $this->transformAndWriteToCSV();
+            $currentPage = $productPage;
+            $productPage = $productPage->getNextPage();
+            $tasks[] = Task::async($transformAndWriteToCSV, $currentPage, $writer);
+        }
 
         Task::await(all($tasks));
+    }
+
+    private function transformAndWriteToCSV(): callable {
+        return function(PageInterface $page, Writer $writer) {
+            var_dump('response');
+            $products = [];
+            foreach ($page->getItems() as $item) {
+                $products[] = [
+                    $item['identifier'],
+                    implode(',', $item['categories'])
+                ];
+            };
+        };
     }
 }

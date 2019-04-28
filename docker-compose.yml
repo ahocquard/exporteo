@@ -2,7 +2,7 @@ version: '3'
 
 services:
     php:
-        image: transformeo
+        image: exporteo
         build:
             context: docker/php
         environment:

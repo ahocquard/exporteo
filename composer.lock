@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b79c2030261c4c81dce89c5fd5e1aa40",
+    "content-hash": "f22174cb0d524f5499748631bd143e86",
     "packages": [
         {
             "name": "akeneo/api-php-client",
@@ -157,6 +157,73 @@
             "description": "HTTP Client & Server",
             "homepage": "https://github.com/concurrent-php/http",
             "time": "2019-04-27T15:39:08+00:00"
+        },
+        {
+            "name": "league/csv",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/csv.git",
+                "reference": "c5328787dd346b41ce16b5d8a530bc42b974d598"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/csv/zipball/c5328787dd346b41ce16b5d8a530bc42b974d598",
+                "reference": "c5328787dd346b41ce16b5d8a530bc42b974d598",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=7.0.10"
+            },
+            "require-dev": {
+                "ext-curl": "*",
+                "friendsofphp/php-cs-fixer": "^2.12",
+                "phpstan/phpstan": "^0.9.2",
+                "phpstan/phpstan-phpunit": "^0.9.4",
+                "phpstan/phpstan-strict-rules": "^0.9.0",
+                "phpunit/phpunit": "^6.0"
+            },
+            "suggest": {
+                "ext-iconv": "Needed to ease transcoding CSV using iconv stream filters"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "9.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "League\\Csv\\": "src"
+                },
+                "files": [
+                    "src/functions_include.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ignace Nyamagana Butera",
+                    "email": "nyamsprod@gmail.com",
+                    "homepage": "https://github.com/nyamsprod/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Csv data manipulation made easy in PHP",
+            "homepage": "http://csv.thephpleague.com",
+            "keywords": [
+                "csv",
+                "export",
+                "filter",
+                "import",
+                "read",
+                "write"
+            ],
+            "time": "2019-03-19T16:44:00+00:00"
         },
         {
             "name": "nyholm/psr7",
@@ -2578,7 +2645,8 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "akeneo/api-php-client": 20,
-        "concurrent-php/http": 20
+        "concurrent-php/http": 20,
+        "league/csv": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

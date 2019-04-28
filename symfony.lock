@@ -39,6 +39,9 @@
     "donatj/mock-webserver": {
         "version": "v2.0.0"
     },
+    "league/csv": {
+        "version": "9.x-dev"
+    },
     "nyholm/psr7": {
         "version": "1.0",
         "recipe": {
