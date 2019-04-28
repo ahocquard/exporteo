@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace App\Application;
 
 use Akeneo\Pim\ApiClient\AkeneoPimClientBuilder;
-use Akeneo\Pim\ApiClient\Pagination\Page;
 use Akeneo\Pim\ApiClient\Pagination\PageInterface;
 use Concurrent\Http\HttpClient;
 use Concurrent\Http\HttpClientConfig;
 use Concurrent\Task;
-use Concurrent\Timer;
 use League\Csv\Writer;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use function Concurrent\all;
@@ -55,6 +53,8 @@ final class ExportProductsToCsvCommandHandler
         }
 
         Task::await(all($tasks));
+
+        $filesystem->copy($temporaryFilePath, $command->pathToExport());
     }
 
     private function transformAndWriteToCSV(): callable {

@@ -26,7 +26,9 @@ class TestCommand extends Command
             ->addOption('secret', 's', InputOption::VALUE_REQUIRED, 'Secret for the client')
             ->addOption('username', 'u', InputOption::VALUE_REQUIRED, 'Username')
             ->addOption('password', 'p', InputOption::VALUE_REQUIRED, 'Password of the user')
+            ->addOption('filepath', null, InputOption::VALUE_REQUIRED, 'Filepath of the CSV file to export')
             ->addOption('uri', null, InputOption::VALUE_REQUIRED, 'Uri of the PIM');
+
     }
 
     // TODO: use DI
@@ -37,7 +39,8 @@ class TestCommand extends Command
             $input->getOption('secret'),
             $input->getOption('username'),
             $input->getOption('password'),
-            $input->getOption('uri')
+            $input->getOption('uri'),
+            $input->getOption('filepath')
         );
         $commandHandler = new ExportProductsToCsvCommandHandler();
         $commandHandler->handle($command);

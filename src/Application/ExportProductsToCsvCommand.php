@@ -21,13 +21,17 @@ final class ExportProductsToCsvCommand
     /** @var string */
     private $uri;
 
-    public function __construct(string $client, string $secret, string $username, string $password, string $uri)
+    /** @var string */
+    private $pathToExport;
+
+    public function __construct(string $client, string $secret, string $username, string $password, string $uri, string $pathToExport)
     {
         $this->client = $client;
         $this->secret = $secret;
         $this->username = $username;
         $this->password = $password;
         $this->uri = $uri;
+        $this->pathToExport = $pathToExport;
     }
 
     public function client(): string
@@ -53,5 +57,10 @@ final class ExportProductsToCsvCommand
     public function uri(): string
     {
         return $this->uri;
+    }
+
+    public function pathToExport(): string
+    {
+        return $this->pathToExport;
     }
 }

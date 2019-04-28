@@ -36,11 +36,17 @@
     "container-interop/container-interop": {
         "version": "1.2.0"
     },
+    "doctrine/instantiator": {
+        "version": "1.2.x-dev"
+    },
     "donatj/mock-webserver": {
         "version": "v2.0.0"
     },
     "league/csv": {
         "version": "9.x-dev"
+    },
+    "myclabs/deep-copy": {
+        "version": "1.x-dev"
     },
     "nyholm/psr7": {
         "version": "1.0",
@@ -53,6 +59,12 @@
         "files": [
             "config/packages/nyholm_psr7.yaml"
         ]
+    },
+    "phar-io/manifest": {
+        "version": "1.0.x-dev"
+    },
+    "phar-io/version": {
+        "version": "2.0.1"
     },
     "php-http/discovery": {
         "version": "1.6.1"
@@ -68,6 +80,48 @@
     },
     "php-http/promise": {
         "version": "1.0-dev"
+    },
+    "phpdocumentor/reflection-common": {
+        "version": "1.0.1"
+    },
+    "phpdocumentor/reflection-docblock": {
+        "version": "4.3.0"
+    },
+    "phpdocumentor/type-resolver": {
+        "version": "0.4.0"
+    },
+    "phpspec/prophecy": {
+        "version": "1.8.x-dev"
+    },
+    "phpunit/php-code-coverage": {
+        "version": "7.0-dev"
+    },
+    "phpunit/php-file-iterator": {
+        "version": "2.0.x-dev"
+    },
+    "phpunit/php-text-template": {
+        "version": "1.2.1"
+    },
+    "phpunit/php-timer": {
+        "version": "2.1-dev"
+    },
+    "phpunit/php-token-stream": {
+        "version": "3.0-dev"
+    },
+    "phpunit/phpunit": {
+        "version": "4.7",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "4.7",
+            "ref": "f6f9ee3a511e9d9ad6a53d92fbaa1a709ed8c1ca"
+        },
+        "files": [
+            ".env.test",
+            "phpunit.xml.dist",
+            "config/bootstrap.php",
+            "tests/.gitignore"
+        ]
     },
     "psr/cache": {
         "version": "1.0.1"
@@ -95,6 +149,39 @@
     },
     "ralouphie/getallheaders": {
         "version": "2.0.5"
+    },
+    "sebastian/code-unit-reverse-lookup": {
+        "version": "1.0.x-dev"
+    },
+    "sebastian/comparator": {
+        "version": "3.0-dev"
+    },
+    "sebastian/diff": {
+        "version": "3.0-dev"
+    },
+    "sebastian/environment": {
+        "version": "4.2-dev"
+    },
+    "sebastian/exporter": {
+        "version": "3.1.x-dev"
+    },
+    "sebastian/global-state": {
+        "version": "3.0-dev"
+    },
+    "sebastian/object-enumerator": {
+        "version": "3.0.x-dev"
+    },
+    "sebastian/object-reflector": {
+        "version": "1.1-dev"
+    },
+    "sebastian/recursion-context": {
+        "version": "3.0.x-dev"
+    },
+    "sebastian/resource-operations": {
+        "version": "2.0-dev"
+    },
+    "sebastian/version": {
+        "version": "2.0.1"
     },
     "symfony/cache": {
         "version": "v4.2.7"
@@ -209,6 +296,9 @@
     },
     "symfony/yaml": {
         "version": "v4.2.7"
+    },
+    "theseer/tokenizer": {
+        "version": "1.1.2"
     },
     "webmozart/assert": {
         "version": "1.4.0"

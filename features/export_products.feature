@@ -10,6 +10,6 @@ Feature:
     Then I have the following file:
     """
     identifier;categories
-    bimbamboum;shoes,clothes
-    boumbambim;
+    big_boot;shoes,clothes
+    small_boot;
     """

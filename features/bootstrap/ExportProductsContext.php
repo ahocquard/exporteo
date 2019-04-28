@@ -1,9 +1,7 @@
 <?php
-/**
- * @copyright 2019 Akeneo SAS (http://www.akeneo.com)
- * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
- */
 
+use App\Application\ExportProductsToCsvCommand;
+use App\Application\ExportProductsToCsvCommandHandler;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use donatj\MockWebServer\MockWebServer;
@@ -20,9 +18,7 @@ class ExportProductsContext implements Context
     /** @var MockWebServer */
     private $server;
 
-    /**
-     * @var KernelInterface
-     */
+    /** @var KernelInterface */
     private $kernel;
 
     public function __construct(KernelInterface $kernel)
@@ -66,7 +62,16 @@ class ExportProductsContext implements Context
      */
     public function iExportTheseProductsFromTheAPI()
     {
-
+        $command = new ExportProductsToCsvCommand(
+            'client',
+            'secret',
+            'username',
+            'password',
+            '127.0.0.1',
+            $this->kernel->getProjectDir() . '/var/test-files/export_categories.csv'
+        );
+        $commandHandler = new ExportProductsToCsvCommandHandler();
+        $commandHandler->handle($command);
     }
 
     /**
@@ -101,100 +106,90 @@ JSON;
 
         return <<<JSON
         {
-            "_links":{
-                "self":{
-                  "href": "$baseUri\/api\/rest\/v1\/products?page=1&with_count=true&pagination_type=page&limit=10"
-                },
-                "first":{
-                  "href": "$baseUri\/api\/rest\/v1\/products?page=1&with_count=true&pagination_type=page&limit=10"
-                },
-                "next":{
-                  "href": "$baseUri\/api\/rest\/v1\/products?page=2&with_count=true&pagination_type=page&limit=10"
-                }
-            },
-            "current_page": 1,
-            "items_count": 11,
-            "_embedded": {
-                "items": [
-                  {
-                    "_links":{
-                      "self":{
-                        "href": "$baseUri\/api\/rest\/v1\/products\/big_boot"
-                      }
-                    },
-                    "identifier":"big_boot",
-                    "family":"boots",
-                    "groups":[
-                      "similar_boots"
-                    ],
-                    "categories":[
-                      "summer_collection",
-                      "winter_boots"
-                    ],
-                    "enabled":true,
-                    "values":{
-                      "color":[
-                        {
-                          "locale":null,
-                          "scope":null,
-                          "data":"black"
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "_links":{
-                      "self":{
-                        "href": "$baseUri\/api\/rest\/v1\/products\/docks_red"
-                      }
-                    },
-                    "identifier":"docks_red",
-                    "family":"boots",
-                    "groups":[
-                      "caterpillar_boots"
-                    ],
-                    "categories":[
-                      "winter_collection"
-                    ],
-                    "enabled":true,
-                    "values":{
-                      "color":[
-                        {
-                          "locale":null,
-                          "scope":null,
-                          "data":"red"
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "_links":{
-                      "self":{
-                        "href":"$baseUri\/api\/rest\/v1\/products\/small_boot"
-                      }
-                    },
-                    "identifier":"small_boot",
-                    "family":"boots",
-                    "groups":[
-                      "similar_boots"
-                    ],
-                    "categories":[
-                      "summer_collection",
-                      "winter_boots",
-                      "winter_collection"
-                    ],
-                    "enabled":true,
-                    "values":{
-                      "color":[
-                        {
-                          "locale":null,
-                          "scope":null,
-                          "data":"maroon"
-                        }
-                      ]
-                    }
-                  },
-
+        	"_links": {
+        		"self": {
+        			"href": "$baseUri\/api\/rest\/v1\/products?page=1&with_count=true&pagination_type=page&limit=10"
+        		},
+        		"first": {
+        			"href": "$baseUri\/api\/rest\/v1\/products?page=1&with_count=true&pagination_type=page&limit=10"
+        		},
+        		"next": {
+        			"href": "$baseUri\/api\/rest\/v1\/products?page=2&with_count=true&pagination_type=page&limit=10"
+        		}
+        	},
+        	"current_page": 1,
+        	"items_count": 11,
+        	"_embedded": {
+        		"items": [{
+        				"_links": {
+        					"self": {
+        						"href": "$baseUri\/api\/rest\/v1\/products\/big_boot"
+        					}
+        				},
+        				"identifier": "big_boot",
+        				"family": "boots",
+        				"groups": [
+        					"similar_boots"
+        				],
+        				"categories": [
+        					"summer_collection",
+        					"winter_boots"
+        				],
+        				"enabled": true,
+        				"values": {
+        					"color": [{
+        						"locale": null,
+        						"scope": null,
+        						"data": "black"
+        					}]
+        				}
+        			},
+        			{
+        				"_links": {
+        					"self": {
+        						"href": "$baseUri\/api\/rest\/v1\/products\/docks_red"
+        					}
+        				},
+        				"identifier": "docks_red",
+        				"family": "boots",
+        				"groups": [
+        					"caterpillar_boots"
+        				],
+        				"categories": [
+        					"winter_collection"
+        				],
+        				"enabled": true,
+        				"values": {
+        					"color": [{
+        						"locale": null,
+        						"scope": null,
+        						"data": "red"
+        					}]
+        				}
+        			},
+        			{
+        				"_links": {
+        					"self": {
+        						"href": "$baseUri\/api\/rest\/v1\/products\/small_boot"
+        					}
+        				},
+        				"identifier": "small_boot",
+        				"family": "boots",
+        				"groups": [
+        					"similar_boots"
+        				],
+        				"categories": [],
+        				"enabled": true,
+        				"values": {
+        					"color": [{
+        						"locale": null,
+        						"scope": null,
+        						"data": "maroon"
+        					}]
+        				}
+        			}
+        		]
+        	}
         }
 JSON;
     }
