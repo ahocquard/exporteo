@@ -52,7 +52,9 @@ final class ExportProductsToCsvCommandHandler
             $tasks[] = Task::async($transformAndWriteToCSV, $currentPage, $writer);
         }
 
-        Task::await(all($tasks));
+        if (!empty($tasks)) {
+            Task::await(all($tasks));
+        }
 
         $filesystem->copy($temporaryFilePath, $command->pathToExport());
     }

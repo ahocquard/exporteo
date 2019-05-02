@@ -4,9 +4,21 @@ use App\Application\ExportProductsToCsvCommand;
 use App\Application\ExportProductsToCsvCommandHandler;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
+use Concurrent\Http\HttpClient;
+use Concurrent\Http\HttpClientConfig;
+use Concurrent\Http\HttpServer;
+use Concurrent\Http\HttpServerConfig;
+use Concurrent\Http\TcpConnectionManager;
+use Concurrent\Network\TcpServer;
+use Concurrent\Task;
 use donatj\MockWebServer\MockWebServer;
 use donatj\MockWebServer\Response;
 use donatj\MockWebServer\ResponseStack;
+use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Webmozart\Assert\Assert;
 
@@ -15,11 +27,18 @@ class ExportProductsContext implements Context
     const TOKEN_URI = 'api/oauth/v1/token';
     const PRODUCTS_URI = 'api/rest/v1/products';
 
-    /** @var MockWebServer */
-    private $server;
+    ///** @var MockWebServer */
+    //private $server;
 
     /** @var KernelInterface */
     private $kernel;
+
+    protected $logger;
+    protected $manager;
+    protected $factory;
+    protected $client;
+    protected $server;
+    protected $address;
 
     public function __construct(KernelInterface $kernel)
     {
@@ -31,22 +50,59 @@ class ExportProductsContext implements Context
      */
     public function theProductBig_bootCategorizedInSummer_collectionAndWinter_boots()
     {
-        $this->server = new MockWebServer(8081, '127.0.0.1');
-        $this->server->start();
+        //$this->server = new MockWebServer(8081, '127.0.0.1');
+        //$this->server->start();
+        //$output = [];
+        //$this->server->setResponseOfPath(
+        //    '/'. self::TOKEN_URI,
+        //    new ResponseStack(
+        //        new Response($this->getAuthenticatedJson())
+        //    )
+        //);
+        //
+        //$this->server->setResponseOfPath(
+        //    '/'. self::PRODUCTS_URI,
+        //    new ResponseStack(
+        //        new Response($this->getFirstPage(), [], 200)
+        //    )
+        //);
 
-        $this->server->setResponseOfPath(
-            '/'. self::TOKEN_URI,
-            new ResponseStack(
-                new Response($this->getAuthenticatedJson())
-            )
-        );
+        $factory = new Psr17Factory();
+        $server = new HttpServer(new HttpServerConfig($factory, $factory));
 
-        $this->server->setResponseOfPath(
-            '/'. self::PRODUCTS_URI,
-            new ResponseStack(
-                new Response($this->getFirstPage(), [], 200)
-            )
-        );
+        $handler = new class($factory, $this) implements RequestHandlerInterface {
+            private $factory;
+
+            private $exportProductContext;
+
+            public function __construct(ResponseFactoryInterface $factory, ExportProductsContext $exportProductsContext) {
+                $this->factory = $factory;
+                $this->exportProductContext = $exportProductsContext;
+            }
+
+            public function handle(ServerRequestInterface $request): ResponseInterface {
+
+                $path = rtrim(urldecode(preg_replace("'\?.*$'", '', $request->getRequestTarget())), '/');
+                if ($path == '/api/oauth/v1/token') {
+                    $response = $this->factory->createResponse();
+                    $response = $response->withHeader('Content-Type', 'application/json');
+                    $response = $response->withBody($this->factory->createStream($this->exportProductContext->getAuthenticatedJson()));
+                    return $response;
+                }
+
+                if ($path == '/api/rest/v1/products') {
+                    $response = $this->factory->createResponse();
+                    $response = $response->withHeader('Content-Type', 'application/json');
+                    $response = $response->withBody($this->factory->createStream($this->exportProductContext->getFirstPage('http://127.0.0.1:8081')));
+
+                    return $response;
+                }
+
+                return $this->factory->createResponse(404);
+            }
+        };
+
+        $server->run(TcpServer::listen('127.0.0.1', 8081), $handler);
     }
 
 
@@ -67,7 +123,7 @@ class ExportProductsContext implements Context
             'secret',
             'username',
             'password',
-            '127.0.0.1',
+            'http://127.0.0.1:8081/',
             $this->kernel->getProjectDir() . '/var/test-files/export_categories.csv'
         );
         $commandHandler = new ExportProductsToCsvCommandHandler();
@@ -89,7 +145,7 @@ class ExportProductsContext implements Context
     }
 
 
-    private function getAuthenticatedJson()
+    public function getAuthenticatedJson(): string
     {
         return <<<JSON
             {
@@ -100,10 +156,8 @@ JSON;
     }
 
 
-    private function getFirstPage()
+    public function getFirstPage(string $baseUri)
     {
-        $baseUri = $this->server->getServerRoot();
-
         return <<<JSON
         {
         	"_links": {
@@ -112,9 +166,6 @@ JSON;
         		},
         		"first": {
         			"href": "$baseUri\/api\/rest\/v1\/products?page=1&with_count=true&pagination_type=page&limit=10"
-        		},
-        		"next": {
-        			"href": "$baseUri\/api\/rest\/v1\/products?page=2&with_count=true&pagination_type=page&limit=10"
         		}
         	},
         	"current_page": 1,
