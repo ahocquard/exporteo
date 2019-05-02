@@ -141,7 +141,7 @@ class ExportProductsContext implements Context
         Assert::true(file_exists($path), "No generated file '$path'");
         $file = file_get_contents($path);
 
-        Assert::same($expectedFile, $file);
+        Assert::same($file, $expectedFile);
     }
 
 

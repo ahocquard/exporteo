@@ -35,7 +35,7 @@ final class ExportProductsToCsvCommandHandler
         );
 
         $filesystem = new Filesystem();
-        $temporaryFilePath = $filesystem->tempnam(__DIR__. '/../../', 'exporteo_json_products_');
+        $temporaryFilePath = $filesystem->tempnam('/tmp', 'exporteo_json_products_');
         $writer = Writer::createFromPath($temporaryFilePath);
         //$writer->setEnclosure(' ');
         $writer->insertOne(['identifier', 'categories']);
@@ -43,10 +43,12 @@ final class ExportProductsToCsvCommandHandler
         $productPage = $client->getProductApi()->listPerPage(100);
         $tasks = [];
 
-        while($productPage->hasNextPage()) {
-            var_dump('request');
+        $transformAndWriteToCSV = $this->transformAndWriteToCSV();
+        if (!$productPage->hasNextPage()) {
+            $transformAndWriteToCSV($productPage, $writer);
+        }
 
-            $transformAndWriteToCSV = $this->transformAndWriteToCSV();
+        while($productPage->hasNextPage()) {
             $currentPage = $productPage;
             $productPage = $productPage->getNextPage();
             $tasks[] = Task::async($transformAndWriteToCSV, $currentPage, $writer);
@@ -57,11 +59,11 @@ final class ExportProductsToCsvCommandHandler
         }
 
         $filesystem->copy($temporaryFilePath, $command->pathToExport());
+        $filesystem->remove($temporaryFilePath);
     }
 
     private function transformAndWriteToCSV(): callable {
         return function(PageInterface $page, Writer $writer) {
-            var_dump('response');
             $products = [];
             foreach ($page->getItems() as $item) {
                 $products[] = [
@@ -69,6 +71,8 @@ final class ExportProductsToCsvCommandHandler
                     implode(',', $item['categories'])
                 ];
             };
+
+            $writer->insertAll($products);
         };
     }
 }
