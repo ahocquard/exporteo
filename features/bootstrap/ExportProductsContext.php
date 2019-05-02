@@ -4,16 +4,9 @@ use App\Application\ExportProductsToCsvCommand;
 use App\Application\ExportProductsToCsvCommandHandler;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
-use Concurrent\Http\HttpClient;
-use Concurrent\Http\HttpClientConfig;
 use Concurrent\Http\HttpServer;
 use Concurrent\Http\HttpServerConfig;
-use Concurrent\Http\TcpConnectionManager;
 use Concurrent\Network\TcpServer;
-use Concurrent\Task;
-use donatj\MockWebServer\MockWebServer;
-use donatj\MockWebServer\Response;
-use donatj\MockWebServer\ResponseStack;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -26,9 +19,6 @@ class ExportProductsContext implements Context
 {
     const TOKEN_URI = 'api/oauth/v1/token';
     const PRODUCTS_URI = 'api/rest/v1/products';
-
-    ///** @var MockWebServer */
-    //private $server;
 
     /** @var KernelInterface */
     private $kernel;
@@ -50,23 +40,6 @@ class ExportProductsContext implements Context
      */
     public function theProductBig_bootCategorizedInSummer_collectionAndWinter_boots()
     {
-        //$this->server = new MockWebServer(8081, '127.0.0.1');
-        //$this->server->start();
-        //$output = [];
-        //$this->server->setResponseOfPath(
-        //    '/'. self::TOKEN_URI,
-        //    new ResponseStack(
-        //        new Response($this->getAuthenticatedJson())
-        //    )
-        //);
-        //
-        //$this->server->setResponseOfPath(
-        //    '/'. self::PRODUCTS_URI,
-        //    new ResponseStack(
-        //        new Response($this->getFirstPage(), [], 200)
-        //    )
-        //);
-
         $factory = new Psr17Factory();
         $server = new HttpServer(new HttpServerConfig($factory, $factory));
 
@@ -114,6 +87,13 @@ class ExportProductsContext implements Context
     }
 
     /**
+     * @Given /^another product docks_red categorized in winter_collection$/
+     */
+    public function anotherProductDocks_redCategorizedInWinter_collection()
+    {
+    }
+
+    /**
      * @When /^I export these products from the API$/
      */
     public function iExportTheseProductsFromTheAPI()
@@ -133,15 +113,13 @@ class ExportProductsContext implements Context
     /**
      * @Then /^I have the following file:$/
      */
-    public function iHaveTheFollowingFile(PyStringNode $string)
+    public function iHaveTheFollowingFile(PyStringNode $expectedContent)
     {
-        $expectedFile = file_get_contents($this->kernel->getProjectDir() . '/features/expected-files/export_categories.csv');
-
         $path = $this->kernel->getProjectDir() . '/var/test-files/export_categories.csv';
         Assert::true(file_exists($path), "No generated file '$path'");
         $file = file_get_contents($path);
 
-        Assert::same($file, $expectedFile);
+        Assert::same($file, $expectedContent->getRaw());
     }
 
 
