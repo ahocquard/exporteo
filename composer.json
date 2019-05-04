@@ -21,8 +21,8 @@
     },
     "require-dev": {
         "behat/behat": "^3.5",
-        "behat/symfony2-extension": "^2.1",
         "donatj/mock-webserver": "^2.0",
+        "friends-of-behat/symfony-extension": "^2.0",
         "symfony/test-pack": "^1.0"
     },
     "config": {

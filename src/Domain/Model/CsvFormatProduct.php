@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Model;
 
-final class Product
+final class CsvFormatProduct
 {
     /** @var string */
     private $identifier;
@@ -32,5 +32,13 @@ final class Product
     public function categories(): array
     {
         return $this->categories;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'identifier' => $this->identifier,
+            'categories' => implode(',', $this->categories)
+        ];
     }
 }

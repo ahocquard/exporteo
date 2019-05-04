@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
+namespace App\Tests\Behat;
+
 use App\Application\ExportProductsToCsvCommand;
 use App\Application\ExportProductsToCsvCommandHandler;
 use Behat\Behat\Context\Context;
@@ -23,16 +27,13 @@ class ExportProductsContext implements Context
     /** @var KernelInterface */
     private $kernel;
 
-    protected $logger;
-    protected $manager;
-    protected $factory;
-    protected $client;
-    protected $server;
-    protected $address;
+    /** @var ExportProductsToCsvCommandHandler */
+    private $exportProductsToCsvCommandHandler;
 
-    public function __construct(KernelInterface $kernel)
+    public function __construct(KernelInterface $kernel, ExportProductsToCsvCommandHandler $exportProductsToCsvCommandHandler)
     {
         $this->kernel = $kernel;
+        $this->exportProductsToCsvCommandHandler = $exportProductsToCsvCommandHandler;
     }
 
     /**
@@ -106,8 +107,8 @@ class ExportProductsContext implements Context
             'http://127.0.0.1:8081/',
             $this->kernel->getProjectDir() . '/var/test-files/export_categories.csv'
         );
-        $commandHandler = new ExportProductsToCsvCommandHandler();
-        $commandHandler->handle($command);
+
+        $this->exportProductsToCsvCommandHandler->handle($command);
     }
 
     /**

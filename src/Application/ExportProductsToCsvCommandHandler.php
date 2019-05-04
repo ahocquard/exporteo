@@ -6,6 +6,7 @@ namespace App\Application;
 
 use Akeneo\Pim\ApiClient\AkeneoPimClientBuilder;
 use Akeneo\Pim\ApiClient\Pagination\PageInterface;
+use App\Domain\Query\GetApiFormatProductList;
 use Concurrent\Http\HttpClient;
 use Concurrent\Http\HttpClientConfig;
 use Concurrent\Task;
@@ -16,22 +17,23 @@ use Symfony\Component\Filesystem\Filesystem;
 
 final class ExportProductsToCsvCommandHandler
 {
+    /** @var GetApiFormatProductList */
+    private $getApiFormatProductList;
+
+    public function __construct(GetApiFormatProductList $getApiFormatProductList)
+    {
+        $this->getApiFormatProductList = $getApiFormatProductList;
+    }
+
     // TODO: no coupling to the client as it's infra
     public function handle(ExportProductsToCsvCommand $command)
     {
-        $factory = new Psr17Factory();
-        $clientBuilder = new AkeneoPimClientBuilder($command->uri());
-
-        $clientBuilder
-            ->setHttpClient(new HttpClient(new HttpClientConfig($factory)))
-            ->setRequestFactory($factory)
-            ->setStreamFactory($factory);
-
-        $client = $clientBuilder->buildAuthenticatedByPassword(
+        $productPage = $this->getApiFormatProductList->fetchByPage(
             $command->client(),
             $command->secret(),
             $command->username(),
-            $command->password()
+            $command->password(),
+            $command->uri()
         );
 
         $filesystem = new Filesystem();
@@ -40,7 +42,6 @@ final class ExportProductsToCsvCommandHandler
         //$writer->setEnclosure(' ');
         $writer->insertOne(['identifier', 'categories']);
 
-        $productPage = $client->getProductApi()->listPerPage(100);
         $tasks = [];
 
         $transformAndWriteToCSV = $this->transformAndWriteToCSV();

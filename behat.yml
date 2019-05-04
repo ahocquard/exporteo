@@ -2,12 +2,6 @@ default:
     suites:
         default:
             contexts:
-                - FeatureContext:
-                    kernel: '@kernel'
-                - ExportProductsContext:
-                      kernel: '@kernel'
+                - App\Tests\Behat\ExportProductsContext
     extensions:
-        Behat\Symfony2Extension:
-            kernel:
-                bootstrap: features/bootstrap/bootstrap.php
-                class: App\Kernel
+        FriendsOfBehat\SymfonyExtension: ~

@@ -8,7 +8,7 @@ services:
         environment:
             COMPOSER_HOME: /home/docker/.composer
             PHP_IDE_CONFIG: 'serverName=docker'
-            PHP_XDEBUG_ENABLED: "${PHP_XDEBUG_ENABLED}"
+            PHP_XDEBUG_ENABLED: "${PHP_XDEBUG_ENABLED:-0}"
             PHP_XDEBUG_IDE_KEY: XDEBUG_IDE_KEY
             XDEBUG_CONFIG: 'remote_host=${DOCKER_HOST_IP}'
         user: docker
