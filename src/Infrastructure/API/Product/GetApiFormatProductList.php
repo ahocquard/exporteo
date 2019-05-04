@@ -41,6 +41,6 @@ final class GetApiFormatProductList implements \App\Domain\Query\GetApiFormatPro
         );
 
         // TODO: use search after
-        return $client->getProductApi()->listPerPage(100);
+        return $client->getProductApi()->listPerPage(100, true, ['pagination_type' => 'search_after']);
     }
 }
