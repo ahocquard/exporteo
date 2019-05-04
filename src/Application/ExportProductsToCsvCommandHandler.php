@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace App\Application;
 
-use Akeneo\Pim\ApiClient\AkeneoPimClientBuilder;
 use Akeneo\Pim\ApiClient\Pagination\PageInterface;
+use App\Domain\Model\CsvFormatProduct;
+use App\Domain\Model\CsvFormatProductsList;
 use App\Domain\Query\GetApiFormatProductList;
-use Concurrent\Http\HttpClient;
-use Concurrent\Http\HttpClientConfig;
 use Concurrent\Task;
 use League\Csv\Writer;
-use Nyholm\Psr7\Factory\Psr17Factory;
-use function Concurrent\all;
 use Symfony\Component\Filesystem\Filesystem;
+use function Concurrent\all;
 
 final class ExportProductsToCsvCommandHandler
 {
@@ -36,10 +34,9 @@ final class ExportProductsToCsvCommandHandler
             $command->uri()
         );
 
-        $filesystem = new Filesystem();
-        $temporaryFilePath = $filesystem->tempnam('/tmp', 'exporteo_json_products_');
+        $temporaryFilePath = $this->createTemporaryFile();
+
         $writer = Writer::createFromPath($temporaryFilePath);
-        //$writer->setEnclosure(' ');
         $writer->insertOne(['identifier', 'categories']);
 
         $tasks = [];
@@ -59,21 +56,38 @@ final class ExportProductsToCsvCommandHandler
             Task::await(all($tasks));
         }
 
+        $filesystem = new Filesystem();
         $filesystem->copy($temporaryFilePath, $command->pathToExport());
         $filesystem->remove($temporaryFilePath);
     }
 
     private function transformAndWriteToCSV(): callable {
         return function(PageInterface $page, Writer $writer) {
-            $products = [];
-            foreach ($page->getItems() as $item) {
-                $products[] = [
-                    $item['identifier'],
-                    implode(',', $item['categories'])
-                ];
-            };
+            $products = $this->transformAsArray($page);
 
             $writer->insertAll($products);
+
+            $csvFormatProductList = new CsvFormatProductsList();
+            $this->write($csvFormatProductList, '');
         };
+    }
+
+    private function transformAsArray(PageInterface $page): array
+    {
+        $products = new CsvFormatProductsList();
+        foreach ($page->getItems() as $item) {
+            $products = $products->add(new CsvFormatProduct($item['identifier'], $item['categories']));
+        };
+
+        return $products->toArray();
+    }
+
+    private function createTemporaryFile(): string
+    {
+        $filesystem = new Filesystem();
+        return $filesystem->tempnam('/tmp', 'exporteo_json_products_');    }
+
+    private function write(CsvFormatProductsList $csvFormatProductList, string $filepath): void
+    {
     }
 }
