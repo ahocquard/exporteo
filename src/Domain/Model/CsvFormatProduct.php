@@ -31,10 +31,14 @@ final class CsvFormatProduct
 
     public function toArray(): array
     {
-        return [
+        $array = [
             'identifier' => $this->identifier,
             'categories' => implode(',', $this->categories)
         ];
+
+        ksort($array);
+
+        return $array;
     }
 
     public function headers(): array

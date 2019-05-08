@@ -16,8 +16,8 @@ class CsvFormatProductTestCase extends TestCase
         $product = new CsvFormatProduct('my_product', ['shoes', 'clothes']);
         Assert::assertSame(
             [
-                'identifier' => 'my_product',
-                'categories' => 'shoes,clothes'
+                'categories' => 'shoes,clothes',
+                'identifier' => 'my_product'
             ],
             $product->toArray()
         );
@@ -28,8 +28,8 @@ class CsvFormatProductTestCase extends TestCase
         $product = CsvFormatProduct::fromApiFormatProduct(new ApiFormatProduct('my_product', ['shoes', 'clothes']));
         Assert::assertSame(
             [
-                'identifier' => 'my_product',
-                'categories' => 'shoes,clothes'
+                'categories' => 'shoes,clothes',
+                'identifier' => 'my_product'
             ],
             $product->toArray()
         );

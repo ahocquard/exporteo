@@ -23,12 +23,12 @@ class CsvFormatProductsTestCase extends TestCase
         Assert::assertSame(
             [
                 [
+                    'categories' => 'shoes,clothes',
                     'identifier' => 'my_product_1',
-                    'categories' => 'shoes,clothes'
                 ],
                 [
+                    'categories' => '',
                     'identifier' => 'my_product_2',
-                    'categories' => ''
                 ]
             ],
             $products->toArray()
@@ -47,8 +47,8 @@ class CsvFormatProductsTestCase extends TestCase
         Assert::assertSame(
             [
                 [
-                    'identifier' => 'my_product',
-                    'categories' => 'shoes,clothes'
+                    'categories' => 'shoes,clothes',
+                    'identifier' => 'my_product'
                 ]
             ],
             $product->toArray()
