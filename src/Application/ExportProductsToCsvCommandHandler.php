@@ -24,7 +24,6 @@ final class ExportProductsToCsvCommandHandler
         $this->getApiFormatProductList = $getApiFormatProductList;
     }
 
-    // TODO: no coupling to the client as it's infra
     public function handle(ExportProductsToCsvCommand $command)
     {
         $productPage = $this->getApiFormatProductList->fetchByPage(
@@ -36,21 +35,23 @@ final class ExportProductsToCsvCommandHandler
         );
 
         $temporaryFilePath = $this->createTemporaryFile();
-
         $writer = Writer::createFromPath($temporaryFilePath);
+
+        $flatFormatTemporaryFilepath = $this->createTemporaryFile();
+
         $writer->insertOne(['identifier', 'categories']);
 
         $tasks = [];
 
         $transformAndWriteToCSV = $this->transformAndWriteToCSV();
         if (!$productPage->hasNextPage()) {
-            $transformAndWriteToCSV($productPage->productList(), $writer);
+            $transformAndWriteToCSV($productPage->productList(), $writer, $flatFormatTemporaryFilepath);
         }
 
         while($productPage->hasNextPage()) {
             $currentPage = $productPage;
             $productPage = $productPage->nextPage();
-            $tasks[] = Task::async($transformAndWriteToCSV, $currentPage->productList(), $writer);
+            $tasks[] = Task::async($transformAndWriteToCSV, $currentPage->productList(), $writer, $flatFormatTemporaryFilepath);
         }
 
         if (!empty($tasks)) {
@@ -63,30 +64,21 @@ final class ExportProductsToCsvCommandHandler
     }
 
     private function transformAndWriteToCSV(): callable {
-        return function(ApiFormatProductsList $productList, Writer $writer) {
-            $products = $this->transformAsArray($productList);
-
-            $writer->insertAll($products);
+        return function(ApiFormatProductsList $productList, Writer $writer, string $flatFormatWriter) {
+            $products = CsvFormatProductsList::fromApiFormatProductList($productList);
+            $writer->insertAll($products->toArray());
 
             $csvFormatProductList = new CsvFormatProductsList();
             $this->write($csvFormatProductList, '');
         };
     }
 
-    private function transformAsArray(ApiFormatProductsList $productList): array
-    {
-        $products = new CsvFormatProductsList();
-        foreach ($productList-> products() as $product) {
-            $products = $products->add(new CsvFormatProduct($product->identifier(), $product->categories()));
-        };
-
-        return $products->toArray();
-    }
-
     private function createTemporaryFile(): string
     {
         $filesystem = new Filesystem();
-        return $filesystem->tempnam('/tmp', 'exporteo_json_products_');    }
+
+        return $filesystem->tempnam('/tmp', 'exporteo_json_products_');
+    }
 
     private function write(CsvFormatProductsList $csvFormatProductList, string $filepath): void
     {
