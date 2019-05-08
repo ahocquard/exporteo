@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application;
 
-use Akeneo\Pim\ApiClient\Pagination\PageInterface;
 use App\Domain\Model\ApiFormatProductsList;
-use App\Domain\Model\CsvFormatProduct;
 use App\Domain\Model\CsvFormatProductsList;
 use App\Domain\Model\ExportHeaders;
 use App\Domain\Query\GetApiFormatProductList;
@@ -35,44 +33,33 @@ final class ExportProductsToCsvCommandHandler
             $command->uri()
         );
 
-        $temporaryFilePath = $this->createTemporaryFile();
-
-        $writer = Writer::createFromPath($temporaryFilePath);
-
         $headers = new ExportHeaders();
         $flatFormatTemporaryFilepath = $this->createTemporaryFile();
-
-        $writer->insertOne(['categories', 'identifier']);
 
         $tasks = [];
 
         $transformAndWriteToCSV = $this->transformAndWriteToCSV();
         if (!$productPage->hasNextPage()) {
-            $transformAndWriteToCSV($productPage->productList(), $writer, $flatFormatTemporaryFilepath, $headers);
+            $transformAndWriteToCSV($productPage->productList(), $flatFormatTemporaryFilepath, $headers);
         }
 
         while($productPage->hasNextPage()) {
             $currentPage = $productPage;
             $productPage = $productPage->nextPage();
-            $tasks[] = Task::async($transformAndWriteToCSV, $currentPage->productList(), $writer, $flatFormatTemporaryFilepath, $headers);
+            $tasks[] = Task::async($transformAndWriteToCSV, $currentPage->productList(), $flatFormatTemporaryFilepath, $headers);
         }
 
         if (!empty($tasks)) {
             Task::await(all($tasks));
         }
 
-        $this->createCsvFile($flatFormatTemporaryFilepath, $headers);
-
-        $filesystem = new Filesystem();
-        $filesystem->copy($temporaryFilePath, $command->pathToExport());
-        $filesystem->remove($temporaryFilePath);
+        $this->createCsvFile($flatFormatTemporaryFilepath, $headers, $command->pathToExport());
     }
 
     private function transformAndWriteToCSV(): callable {
-        return function(ApiFormatProductsList $productList, Writer $writer, string $flatFormatWriter, ExportHeaders $headers) {
+        return function(ApiFormatProductsList $productList, string $flatFormatWriter, ExportHeaders $headers) {
             $filesystem = new Filesystem();
             $products = CsvFormatProductsList::fromApiFormatProductList($productList);
-            $writer->insertAll($products->toArray());
 
             $headers->addHeaders(...$products->headers());
             $filesystem->appendToFile($flatFormatWriter, serialize($products) . PHP_EOL);
@@ -86,7 +73,7 @@ final class ExportProductsToCsvCommandHandler
         return $filesystem->tempnam('/tmp', 'exporteo_json_products_');
     }
 
-    private function createCsvFile(string $flatFormatTemporaryFilepath, ExportHeaders $exportHeaders): void
+    private function createCsvFile(string $flatFormatTemporaryFilepath, ExportHeaders $exportHeaders, string $pathToExport): void
     {
         $temporaryFilePath = $this->createTemporaryFile();
         $writer = Writer::createFromPath($temporaryFilePath);
@@ -101,6 +88,12 @@ final class ExportProductsToCsvCommandHandler
 
             $serializedProducts = stream_get_line($resource, 1000000, PHP_EOL);
         }
+
+        $filesystem = new Filesystem();
+        $filesystem->copy($temporaryFilePath, $pathToExport);
+        $filesystem->remove($temporaryFilePath);
+        $filesystem->remove($flatFormatTemporaryFilepath);
+
     }
 
     private function unserializeProducts(string $serializedProduct): CsvFormatProductsList
