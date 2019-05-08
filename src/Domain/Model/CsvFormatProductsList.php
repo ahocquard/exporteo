@@ -37,4 +37,14 @@ final class CsvFormatProductsList
 
         return $productsAsArray;
     }
+
+    public function headers(): array
+    {
+        $headers = [];
+        foreach ($this->products() as $product) {
+            $headers[] = $product->headers();
+        }
+
+        return sort(array_unique(array_merge(...$headers)));
+    }
 }

@@ -41,4 +41,9 @@ final class CsvFormatProduct
             'categories' => implode(',', $this->categories)
         ];
     }
+
+    public function headers(): array
+    {
+        return ['identifier', 'categories'];
+    }
 }
