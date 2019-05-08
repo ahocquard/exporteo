@@ -9,9 +9,9 @@ Feature:
     When I export these products from the API
     Then I have the following file:
     """
-identifier,categories
-big_boot,"summer_collection,winter_boots"
-docks_red,winter_collection
-small_boot,
+categories,identifier
+"summer_collection,winter_boots",big_boot
+winter_collection,docks_red
+,small_boot
 
     """
