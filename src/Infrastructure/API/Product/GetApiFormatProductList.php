@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\API\Product;
 
 use Akeneo\Pim\ApiClient\AkeneoPimClientBuilder;
-use Akeneo\Pim\ApiClient\Pagination\Page;
 use Concurrent\Http\HttpClient;
 use Concurrent\Http\HttpClientConfig;
 use Nyholm\Psr7\Factory\Psr17Factory;
@@ -23,8 +22,7 @@ final class GetApiFormatProductList implements \App\Domain\Query\GetApiFormatPro
     }
 
     // TODO: use env variables
-    // TODO return our own page
-    public function fetchByPage(string $client, string $secret, string $username, string $password, string $uri): Page
+    public function fetchByPage(string $client, string $secret, string $username, string $password, string $uri): \App\Domain\Model\Page
     {
         $akeneoClientBuilder = new AkeneoPimClientBuilder($uri);
 
@@ -40,6 +38,8 @@ final class GetApiFormatProductList implements \App\Domain\Query\GetApiFormatPro
             $password
         );
 
-        return $client->getProductApi()->listPerPage(100, true, ['pagination_type' => 'search_after']);
+        $page = $client->getProductApi()->listPerPage(100, true, ['pagination_type' => 'search_after']);
+
+        return new Page($page);
     }
 }

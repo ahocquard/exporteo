@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application;
 
 use Akeneo\Pim\ApiClient\Pagination\PageInterface;
+use App\Domain\Model\ApiFormatProductsList;
 use App\Domain\Model\CsvFormatProduct;
 use App\Domain\Model\CsvFormatProductsList;
 use App\Domain\Query\GetApiFormatProductList;
@@ -43,13 +44,13 @@ final class ExportProductsToCsvCommandHandler
 
         $transformAndWriteToCSV = $this->transformAndWriteToCSV();
         if (!$productPage->hasNextPage()) {
-            $transformAndWriteToCSV($productPage, $writer);
+            $transformAndWriteToCSV($productPage->productList(), $writer);
         }
 
         while($productPage->hasNextPage()) {
             $currentPage = $productPage;
-            $productPage = $productPage->getNextPage();
-            $tasks[] = Task::async($transformAndWriteToCSV, $currentPage, $writer);
+            $productPage = $productPage->nextPage();
+            $tasks[] = Task::async($transformAndWriteToCSV, $currentPage->productList(), $writer);
         }
 
         if (!empty($tasks)) {
@@ -62,8 +63,8 @@ final class ExportProductsToCsvCommandHandler
     }
 
     private function transformAndWriteToCSV(): callable {
-        return function(PageInterface $page, Writer $writer) {
-            $products = $this->transformAsArray($page);
+        return function(ApiFormatProductsList $productList, Writer $writer) {
+            $products = $this->transformAsArray($productList);
 
             $writer->insertAll($products);
 
@@ -72,11 +73,11 @@ final class ExportProductsToCsvCommandHandler
         };
     }
 
-    private function transformAsArray(PageInterface $page): array
+    private function transformAsArray(ApiFormatProductsList $productList): array
     {
         $products = new CsvFormatProductsList();
-        foreach ($page->getItems() as $item) {
-            $products = $products->add(new CsvFormatProduct($item['identifier'], $item['categories']));
+        foreach ($productList-> products() as $product) {
+            $products = $products->add(new CsvFormatProduct($product->identifier(), $product->categories()));
         };
 
         return $products->toArray();

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Query;
 
-use Akeneo\Pim\ApiClient\Pagination\Page;
+use App\Domain\Model\Page;
 
 interface GetApiFormatProductList
 {

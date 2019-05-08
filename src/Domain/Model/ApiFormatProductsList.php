@@ -18,4 +18,12 @@ final class ApiFormatProductsList
     {
         return $this->products;
     }
+
+    public function add(ApiFormatProduct $product)
+    {
+        $products = $this->products;
+        $products[] = $product;
+
+        return new self(...$products);
+    }
 }
