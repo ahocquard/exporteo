@@ -5,24 +5,45 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Domain\Model;
 
 use App\Domain\Model\ApiFormatProduct;
+use App\Domain\Model\CsvFormatProduct;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @copyright 2019 Akeneo SAS (http://www.akeneo.com)
- * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
- */
-class ApiFormatProductTestCase extends TestCase
+class CsvFormatProductTestCase extends TestCase
 {
-    public function test_it_transformAsArray(): void
+    public function test_it_transform_as_array(): void
     {
-        $product = new ApiFormatProduct('my_product', ['shoes', 'clothes']);
-        Assert::assertSame(['shoes', 'clothes'] , $product->categories());
+        $product = new CsvFormatProduct('my_product', ['shoes', 'clothes']);
+        Assert::assertSame(
+            [
+                'identifier' => 'my_product',
+                'categories' => 'shoes,clothes'
+            ],
+            $product->toArray()
+        );
     }
 
-    public function test_it_has_an_identifier(): void
+    public function test_it_creates_from_an_api_format_product(): void
     {
-        $product = new ApiFormatProduct('my_product', ['shoes', 'clothes']);
-        Assert::assertSame(['shoes', 'clothes'] , $product->categories());
+        $product = CsvFormatProduct::fromApiFormatProduct(new ApiFormatProduct('my_product', ['shoes', 'clothes']));
+        Assert::assertSame(
+            [
+                'identifier' => 'my_product',
+                'categories' => 'shoes,clothes'
+            ],
+            $product->toArray()
+        );
+    }
+
+    public function test_it_gets_csv_headers(): void
+    {
+        $product = new CsvFormatProduct('my_product', ['shoes', 'clothes']);
+        Assert::assertSame(
+            [
+                'identifier',
+                'categories'
+            ],
+            $product->headers()
+        );
     }
 }

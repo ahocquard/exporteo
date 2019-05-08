@@ -52,7 +52,9 @@ final class CsvFormatProductsList
         foreach ($this->products() as $product) {
             $headers[] = $product->headers();
         }
+        $headers = array_unique(array_merge(...$headers));
+        sort($headers);
 
-        return sort(array_unique(array_merge(...$headers)));
+        return $headers;
     }
 }
