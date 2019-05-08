@@ -14,6 +14,14 @@ final class CsvFormatProductsList
         $this->products = $products;
     }
 
+    public static function fromApiFormatProductList(ApiFormatProductsList $products)
+    {
+        $csvFormatProducts = array_map(function(ApiFormatProduct $product) {
+            return CsvFormatProduct::fromApiFormatProduct($product);
+        }, $products->products());
+        return new self(...$csvFormatProducts);
+    }
+
     public function products(): array
     {
         return $this->products;

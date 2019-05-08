@@ -24,14 +24,9 @@ final class CsvFormatProduct
         })(...$categories);
     }
 
-    public function identifier(): string
+    public static function fromApiFormatProduct(ApiFormatProduct $product)
     {
-        return $this->identifier;
-    }
-
-    public function categories(): array
-    {
-        return $this->categories;
+        return new self($product->identifier(), $product->categories());
     }
 
     public function toArray(): array
