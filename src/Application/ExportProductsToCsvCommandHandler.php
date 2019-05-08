@@ -65,8 +65,10 @@ final class ExportProductsToCsvCommandHandler
 
     private function transformAndWriteToCSV(): callable {
         return function(ApiFormatProductsList $productList, Writer $writer, string $flatFormatWriter) {
+            $filesystem = new Filesystem();
             $products = CsvFormatProductsList::fromApiFormatProductList($productList);
             $writer->insertAll($products->toArray());
+            $filesystem->appendToFile($flatFormatWriter, serialize($products) . PHP_EOL);
 
             $csvFormatProductList = new CsvFormatProductsList();
             $this->write($csvFormatProductList, '');
