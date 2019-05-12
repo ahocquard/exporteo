@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Domain\Model;
 
-final class CsvFormatProductsList
+final class ProductList
 {
-    /** @var CsvFormatProduct[] */
+    /** @var Product[] */
     private $products = [];
 
-    public function __construct(CsvFormatProduct ... $products)
+    public function __construct(Product ... $products)
     {
         $this->products = $products;
     }
@@ -17,7 +17,7 @@ final class CsvFormatProductsList
     public static function fromApiFormatProductList(ApiFormatProductsList $products)
     {
         $csvFormatProducts = array_map(function(ApiFormatProduct $product) {
-            return CsvFormatProduct::fromApiFormatProduct($product);
+            return Product::fromApiFormatProduct($product);
         }, $products->products());
         return new self(...$csvFormatProducts);
     }
@@ -27,7 +27,7 @@ final class CsvFormatProductsList
         return $this->products;
     }
 
-    public function add(CsvFormatProduct $product)
+    public function add(Product $product)
     {
         $products = $this->products;
         $products[] = $product;

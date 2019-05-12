@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Model;
 
-final class ApiFormatProduct
+final class Product
 {
     /** @var string */
     private $identifier;
@@ -24,13 +24,25 @@ final class ApiFormatProduct
         })(...$categories);
     }
 
-    public function identifier(): string
+    public static function fromApiFormatProduct(ApiFormatProduct $product)
     {
-        return $this->identifier;
+        return new self($product->identifier(), $product->categories());
     }
 
-    public function categories(): array
+    public function toArray(): array
     {
-        return $this->categories;
+        $array = [
+            'identifier' => $this->identifier,
+            'categories' => implode(',', $this->categories)
+        ];
+
+        ksort($array);
+
+        return $array;
+    }
+
+    public function headers(): array
+    {
+        return ['identifier', 'categories'];
     }
 }

@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\API\Product;
 
-use App\Domain\Model\ApiFormatProduct;
 use App\Domain\Model\ApiFormatProductsList;
 use \Akeneo\Pim\ApiClient\Pagination\Page as AkeneoClientPage;
+use App\Domain\Model\Product;
+use App\Domain\Model\ProductList;
 
 final class Page implements \App\Domain\Model\Page
 {
@@ -19,13 +20,13 @@ final class Page implements \App\Domain\Model\Page
     public function __construct(AkeneoClientPage $akeneoCLientPage)
     {
         $this->akeneoCLientPage = $akeneoCLientPage;
-        $this->productList = new ApiFormatProductsList();
+        $this->productList = new ProductList();
         foreach ($akeneoCLientPage->getItems() as $item) {
-            $this->productList = $this->productList->add(new ApiFormatProduct($item['identifier'], $item['categories']));
+            $this->productList = $this->productList->add(new Product($item['identifier'], $item['categories']));
         }
     }
 
-    public function productList(): ApiFormatProductsList
+    public function productList(): ProductList
     {
         return $this->productList;
     }

@@ -6,7 +6,7 @@ namespace App\Domain\Model;
 
 interface Page
 {
-    public function productList(): ApiFormatProductsList;
+    public function productList(): ProductList;
 
     public function nextPage(): Page;
 

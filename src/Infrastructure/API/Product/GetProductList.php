@@ -10,7 +10,7 @@ use Concurrent\Http\HttpClientConfig;
 use Nyholm\Psr7\Factory\Psr17Factory;
 
 // TODO: to test
-final class GetApiFormatProductList implements \App\Domain\Query\GetApiFormatProductList
+final class GetProductList implements \App\Domain\Query\GetProductList
 {
     /** @var Psr17Factory TODO: split according to the 3 different interfaces */
     private $factory;

@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Application;
 
-use App\Domain\Model\ApiFormatProductsList;
-use App\Domain\Model\CsvFormatProductsList;
+use App\Domain\Model\ProductList;
 use App\Domain\Model\ExportHeaders;
-use App\Domain\Query\GetApiFormatProductList;
+use App\Domain\Query\GetProductList;
 use Concurrent\Task;
 use League\Csv\Writer;
 use Symfony\Component\Filesystem\Filesystem;
@@ -15,10 +14,10 @@ use function Concurrent\all;
 
 final class ExportProductsToCsvCommandHandler
 {
-    /** @var GetApiFormatProductList */
+    /** @var GetProductList */
     private $getApiFormatProductList;
 
-    public function __construct(GetApiFormatProductList $getApiFormatProductList)
+    public function __construct(GetProductList $getApiFormatProductList)
     {
         $this->getApiFormatProductList = $getApiFormatProductList;
     }
@@ -57,12 +56,11 @@ final class ExportProductsToCsvCommandHandler
     }
 
     private function transformAndWriteToCSV(): callable {
-        return function(ApiFormatProductsList $productList, string $flatFormatWriter, ExportHeaders $headers) {
+        return function(ProductList $productList, string $flatFormatWriter, ExportHeaders $headers) {
             $filesystem = new Filesystem();
-            $products = CsvFormatProductsList::fromApiFormatProductList($productList);
 
-            $headers->addHeaders(...$products->headers());
-            $filesystem->appendToFile($flatFormatWriter, serialize($products) . PHP_EOL);
+            $headers->addHeaders(...$productList->headers());
+            $filesystem->appendToFile($flatFormatWriter, serialize($productList) . PHP_EOL);
         };
     }
 
@@ -96,7 +94,7 @@ final class ExportProductsToCsvCommandHandler
 
     }
 
-    private function unserializeProducts(string $serializedProduct): CsvFormatProductsList
+    private function unserializeProducts(string $serializedProduct): ProductList
     {
         return unserialize($serializedProduct);
     }

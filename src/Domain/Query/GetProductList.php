@@ -6,7 +6,7 @@ namespace App\Domain\Query;
 
 use App\Domain\Model\Page;
 
-interface GetApiFormatProductList
+interface GetProductList
 {
     public function fetchByPage(string $client, string $secret, string $username, string $password, string $uri): Page;
 }
