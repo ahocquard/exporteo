@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Model\Product;
 
+use App\Domain\Model\ExportHeaders;
+
 final class ProductList
 {
     /** @var Product[] */
@@ -27,12 +29,12 @@ final class ProductList
         return new self(...$products);
     }
 
-    public function toArray(): array
+    public function toArray(ExportHeaders $headers): array
     {
         $productsAsArray = [];
 
         foreach ($this->products as $product) {
-            $productsAsArray[] = $product->toArray();
+            $productsAsArray[] = $product->toArray($headers);
         }
 
         return $productsAsArray;

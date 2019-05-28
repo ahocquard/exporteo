@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Model\Product;
 
-use App\Domain\Model\ApiFormatProduct;
+use App\Domain\Model\ExportHeaders;
 
 final class Product
 {
@@ -30,17 +30,18 @@ final class Product
         $this->values = $values;
     }
 
-    public function toArray(): array
+    public function toArray(ExportHeaders $headers): array
     {
-        $array = [
+        $properties = [
             'identifier' => $this->identifier,
             'categories' => implode(',', $this->categories)
         ];
 
-        $array = array_merge($array, $this->values->toArray());
-        ksort($array);
+        //var_dump($headers->headersIndexedByKey());
+        $properties = array_merge($headers->headersIndexedByKey(), $properties, $this->values->toArray());
+        ksort($properties);
 
-        return $array;
+        return $properties;
     }
 
     public function headers(): array
