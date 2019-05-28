@@ -6,8 +6,8 @@ namespace App\Infrastructure\API\Product;
 
 use App\Domain\Model\ApiFormatProductsList;
 use \Akeneo\Pim\ApiClient\Pagination\Page as AkeneoClientPage;
-use App\Domain\Model\Product;
-use App\Domain\Model\ProductList;
+use App\Domain\Model\Product\Product;
+use App\Domain\Model\Product\ProductList;
 
 final class Page implements \App\Domain\Model\Page
 {

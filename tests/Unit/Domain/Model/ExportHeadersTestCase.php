@@ -6,8 +6,8 @@ namespace App\Tests\Unit\Domain\Model;
 
 use App\Domain\Model\ApiFormatProduct;
 use App\Domain\Model\ApiFormatProductsList;
-use App\Domain\Model\Product;
-use App\Domain\Model\ProductList;
+use App\Domain\Model\Product\Product;
+use App\Domain\Model\Product\ProductList;
 use App\Domain\Model\ExportHeaders;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;

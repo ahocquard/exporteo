@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Model;
+namespace App\Domain\Model\Product;
+
+use App\Domain\Model\ApiFormatProduct;
 
 final class Product
 {
@@ -12,21 +14,20 @@ final class Product
     /** @var string[] */
     private $categories;
 
+    /** @var ValueList[] */
+    private $values;
+
     /**
      * @param string   $identifier
      * @param string[] $categories
      */
-    public function __construct(string $identifier, array $categories)
+    public function __construct(string $identifier, array $categories, ValueList $values)
     {
         $this->identifier = $identifier;
         $this->categories = (function(string ...$categories) {
             return $categories;
         })(...$categories);
-    }
-
-    public static function fromApiFormatProduct(ApiFormatProduct $product)
-    {
-        return new self($product->identifier(), $product->categories());
+        $this->values = $values;
     }
 
     public function toArray(): array
@@ -36,6 +37,7 @@ final class Product
             'categories' => implode(',', $this->categories)
         ];
 
+        $array = array_merge($array, $this->values->toArray());
         ksort($array);
 
         return $array;
@@ -43,6 +45,7 @@ final class Product
 
     public function headers(): array
     {
-        return ['identifier', 'categories'];
+        $headers = ['identifier', 'categories'];
+        return array_merge($headers, $this->values->headers());
     }
 }

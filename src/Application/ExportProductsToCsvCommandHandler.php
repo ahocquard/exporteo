@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application;
 
-use App\Domain\Model\ProductList;
+use App\Domain\Model\Product\ProductList;
 use App\Domain\Model\ExportHeaders;
 use App\Domain\Query\GetProductList;
 use Concurrent\Task;
@@ -40,6 +40,9 @@ final class ExportProductsToCsvCommandHandler
         $transformAndWriteToCSV = $this->transformAndWriteToCSV();
         if (!$productPage->hasNextPage()) {
             $transformAndWriteToCSV($productPage->productList(), $flatFormatTemporaryFilepath, $headers);
+            $this->createCsvFile($flatFormatTemporaryFilepath, $headers, $command->pathToExport());
+
+            return;
         }
 
         while($productPage->hasNextPage()) {

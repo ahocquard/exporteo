@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Model;
+namespace App\Domain\Model\Product;
 
 final class ProductList
 {
@@ -12,14 +12,6 @@ final class ProductList
     public function __construct(Product ... $products)
     {
         $this->products = $products;
-    }
-
-    public static function fromApiFormatProductList(ApiFormatProductsList $products)
-    {
-        $csvFormatProducts = array_map(function(ApiFormatProduct $product) {
-            return Product::fromApiFormatProduct($product);
-        }, $products->products());
-        return new self(...$csvFormatProducts);
     }
 
     public function products(): array
