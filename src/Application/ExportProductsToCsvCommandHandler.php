@@ -85,7 +85,7 @@ final class ExportProductsToCsvCommandHandler
         $serializedProducts = stream_get_line($resource, 1000000, PHP_EOL);
         while (false !== $serializedProducts) {
             $products = $this->unserializeProducts($serializedProducts);
-            $writer->insertAll($products->toArray());
+            $writer->insertAll($products->toArray($exportHeaders));
 
             $serializedProducts = stream_get_line($resource, 1000000, PHP_EOL);
         }
