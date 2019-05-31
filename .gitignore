@@ -6,15 +6,11 @@
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
-###> behat/symfony2-extension ###
-behat.yml
-###< behat/symfony2-extension ###
-
-###> symfony/phpunit-bridge ###
-.phpunit
-/phpunit.xml
-###< symfony/phpunit-bridge ###
-
 ###> friends-of-behat/symfony-extension ###
 /behat.yml
 ###< friends-of-behat/symfony-extension ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###

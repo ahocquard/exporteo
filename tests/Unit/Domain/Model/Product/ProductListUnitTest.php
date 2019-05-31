@@ -14,7 +14,7 @@ use App\Domain\Model\Product\ValueList;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 
-class ProductListTestCase extends TestCase
+class ProductListUnitTest extends TestCase
 {
     public function test_it_transforms_as_array(): void
     {

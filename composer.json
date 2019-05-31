@@ -8,7 +8,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "akeneo/api-php-client": "dev-use-PSR-for-interoperability",
-        "concurrent-php/http": "dev-http2",
+        "concurrent-php/http": "dev-master",
         "league/csv": "^9.0@dev",
         "nyholm/psr7": "^1.1",
         "symfony/console": "4.2.*",
@@ -23,7 +23,7 @@
         "behat/behat": "^3.5",
         "donatj/mock-webserver": "^2.0",
         "friends-of-behat/symfony-extension": "^2.0",
-        "symfony/test-pack": "^1.0"
+        "phpunit/phpunit": "^8.0"
     },
     "config": {
         "preferred-install": {
