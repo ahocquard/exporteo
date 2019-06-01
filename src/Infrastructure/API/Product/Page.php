@@ -7,7 +7,6 @@ namespace App\Infrastructure\API\Product;
 use \Akeneo\Pim\ApiClient\Pagination\Page as AkeneoClientPage;
 use App\Domain\Model\Product\Product;
 use App\Domain\Model\Product\ProductList;
-use App\Domain\Model\Product\ValueList;
 
 final class Page implements \App\Domain\Model\Page
 {
@@ -15,14 +14,19 @@ final class Page implements \App\Domain\Model\Page
     private $productList;
 
     /** @var AkeneoClientPage */
-    private $akeneoCLientPage;
+    private $akeneoClientPage;
 
-    public function __construct(AkeneoClientPage $akeneoClientPage)
+    /** @var ValueCollectionFactory */
+    private $valueCollectionFactory;
+
+    public function __construct(AkeneoClientPage $akeneoClientPage, ValueCollectionFactory $valueCollectionFactory)
     {
-        $this->akeneoCLientPage = $akeneoClientPage;
+        $this->akeneoClientPage = $akeneoClientPage;
         $this->productList = new ProductList();
+        $this->valueCollectionFactory = $valueCollectionFactory;
+
         foreach ($akeneoClientPage->getItems() as $item) {
-            $this->productList = $this->productList->add(new Product($item['identifier'], $item['categories'], new ValueList()));
+            $this->productList = $this->productList->add(new Product($item['identifier'], $item['categories'], $this->valueCollectionFactory->fromApiFormat($item['values'])));
         }
     }
 
@@ -33,11 +37,11 @@ final class Page implements \App\Domain\Model\Page
 
     public function nextPage(): \App\Domain\Model\Page
     {
-        return new self($this->akeneoCLientPage->getNextPage());
+        return new self($this->akeneoClientPage->getNextPage(), $this->valueCollectionFactory);
     }
 
     public function hasNextPage(): bool
     {
-        return $this->akeneoCLientPage->hasNextPage();
+        return $this->akeneoClientPage->hasNextPage();
     }
 }

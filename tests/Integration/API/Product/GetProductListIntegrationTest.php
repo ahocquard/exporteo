@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Domain\Model;
 
 use App\Domain\Model\Product\Product;
 use App\Domain\Model\Product\ProductList;
+use App\Domain\Model\Product\Value\ScalarValue;
 use App\Domain\Model\Product\ValueList;
 use App\Infrastructure\API\Product\GetProductList;
 use Concurrent\Http\HttpServer;
@@ -36,7 +37,7 @@ class GetProductListIntegrationTest extends KernelTestCase
 
         //var_dump($page);
         Assert::assertEqualsCanonicalizing(new ProductList(
-            new Product('big_boot', ['summer_collection', 'winter_boots'], new ValueList()),
+            new Product('big_boot', ['summer_collection', 'winter_boots'], new ValueList(new ScalarValue('color', null, null, 'black'))),
             new Product('docks_red', ['winter_collection'], new ValueList()),
             new Product('small_boot', [], new ValueList()),
 
