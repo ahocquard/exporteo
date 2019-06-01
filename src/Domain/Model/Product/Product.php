@@ -37,7 +37,6 @@ final class Product
             'categories' => implode(',', $this->categories)
         ];
 
-        //var_dump($headers->headersIndexedByKey());
         $properties = array_merge($headers->headersIndexedByKey(), $properties, $this->values->toArray());
         ksort($properties);
 

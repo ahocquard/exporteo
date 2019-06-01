@@ -8,6 +8,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "akeneo/api-php-client": "dev-use-PSR-for-interoperability",
+        "ext-async" : "*",
         "concurrent-php/http": "dev-master",
         "league/csv": "^9.0@dev",
         "nyholm/psr7": "^1.1",

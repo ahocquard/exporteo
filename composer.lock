@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aea583976e771de9004be53a1497d158",
+    "content-hash": "a49a4d8ffdf32f97c8af1799923a9fd9",
     "packages": [
         {
             "name": "akeneo/api-php-client",
@@ -4458,7 +4458,8 @@
     "platform": {
         "php": ">=7.3",
         "ext-ctype": "*",
-        "ext-iconv": "*"
+        "ext-iconv": "*",
+        "ext-async": "*"
     },
     "platform-dev": []
 }

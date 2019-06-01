@@ -7,18 +7,29 @@ namespace App\Infrastructure\API\Product;
 use Akeneo\Pim\ApiClient\AkeneoPimClientBuilder;
 use Concurrent\Http\HttpClient;
 use Concurrent\Http\HttpClientConfig;
-use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 
-// TODO: to test
 final class GetProductList implements \App\Domain\Query\GetProductList
 {
-    /** @var Psr17Factory TODO: split according to the 3 different interfaces */
-    private $factory;
+    /** @var RequestFactoryInterface */
+    private $requestFactory;
 
-    // TODO: return an iterators
-    public function __construct()
-    {
-        $this->factory = new Psr17Factory();
+    /** @var StreamFactoryInterface */
+    private $streamFactory;
+
+    /** @var ResponseFactoryInterface */
+    private $responseFactory;
+
+    public function __construct(
+        RequestFactoryInterface $requestFactory,
+        StreamFactoryInterface $streamFactory,
+        ResponseFactoryInterface $responseFactory
+    ) {
+        $this->requestFactory = $requestFactory;
+        $this->streamFactory = $streamFactory;
+        $this->responseFactory = $responseFactory;
     }
 
     // TODO: use env variables
@@ -27,9 +38,9 @@ final class GetProductList implements \App\Domain\Query\GetProductList
         $akeneoClientBuilder = new AkeneoPimClientBuilder($uri);
 
         $akeneoClientBuilder
-            ->setHttpClient(new HttpClient(new HttpClientConfig($this->factory)))
-            ->setRequestFactory($this->factory)
-            ->setStreamFactory($this->factory);
+            ->setHttpClient(new HttpClient(new HttpClientConfig($this->responseFactory)))
+            ->setRequestFactory($this->requestFactory)
+            ->setStreamFactory($this->streamFactory);
 
         $client = $akeneoClientBuilder->buildAuthenticatedByPassword(
             $client,

@@ -17,11 +17,11 @@ final class Page implements \App\Domain\Model\Page
     /** @var AkeneoClientPage */
     private $akeneoCLientPage;
 
-    public function __construct(AkeneoClientPage $akeneoCLientPage)
+    public function __construct(AkeneoClientPage $akeneoClientPage)
     {
-        $this->akeneoCLientPage = $akeneoCLientPage;
+        $this->akeneoCLientPage = $akeneoClientPage;
         $this->productList = new ProductList();
-        foreach ($akeneoCLientPage->getItems() as $item) {
+        foreach ($akeneoClientPage->getItems() as $item) {
             $this->productList = $this->productList->add(new Product($item['identifier'], $item['categories'], new ValueList()));
         }
     }

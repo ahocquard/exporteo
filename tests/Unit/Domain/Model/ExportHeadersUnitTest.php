@@ -12,7 +12,7 @@ use App\Domain\Model\ExportHeaders;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 
-class ExportHeadersTestCase extends TestCase
+class ExportHeadersUnitTest extends TestCase
 {
     public function test_it_adds_an_header(): void
     {
