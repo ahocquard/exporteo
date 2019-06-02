@@ -6,7 +6,13 @@ namespace App\Domain\Model\Product\Value;
 
 interface Value
 {
-    public function toArray();
+    public function localeCode(): ?string;
 
-    public function header();
+    public function channelCode(): ?string;
+
+    public function data();
+
+    public function toArray(): array;
+
+    public function header(): string;
 }
