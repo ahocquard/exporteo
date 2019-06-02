@@ -6,6 +6,7 @@ namespace App\Infrastructure\Persistence\Api\Product;
 
 use Akeneo\Pim\ApiClient\Api\AttributeApiInterface;
 use App\Domain\Model\Product\Value\ArrayValue;
+use App\Domain\Model\Product\Value\PriceValue;
 use App\Domain\Model\Product\Value\ScalarValue;
 use App\Domain\Model\Product\ValueCollection;
 
@@ -72,6 +73,9 @@ final class ValueCollectionFactory
                 }
                 else if (in_array($attribute['type'], self::COLLECTION_TYPES)) {
                     $values[] = new ArrayValue($attributeCode, $value['locale'], $value['scope'], $value['data']);
+                }
+                else if ($attribute['type'] === self::PRICE_TYPE) {
+                    $values[] = new PriceValue($attributeCode, $value['locale'], $value['scope'], $value['data']);
                 }
             }
         }

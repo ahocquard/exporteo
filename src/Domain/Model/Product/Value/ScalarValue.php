@@ -19,7 +19,7 @@ final class ScalarValue implements Value
     private $data;
 
     /** @var string */
-    private $header;
+    private $headers;
 
     public function __construct(string $attributeCode, ?string $localeCode, ?string$channelCode, $data)
     {
@@ -27,10 +27,10 @@ final class ScalarValue implements Value
         $this->localeCode = $localeCode;
         $this->channelCode = $channelCode;
 
-        $localeCodesForHeader = $localeCode !== null ? "-$localeCode" : "";
-        $channelCodeForHeader = $channelCode !== null ? "-$channelCode" : "";
+        $localeCodesForHeader = $localeCode !== null ? "-$localeCode" : '';
+        $channelCodeForHeader = $channelCode !== null ? "-$channelCode" : '';
 
-        $this->header = "{$this->attributeCode}{$localeCodesForHeader}{$channelCodeForHeader}";
+        $this->headers = "{$this->attributeCode}{$localeCodesForHeader}{$channelCodeForHeader}";
 
         $this->data = $data;
     }
@@ -57,11 +57,11 @@ final class ScalarValue implements Value
 
     public function headers(): array
     {
-        return [$this->header];
+        return [$this->headers];
     }
 
     public function toArray(): array
     {
-        return [$this->header => $this->data];
+        return [$this->headers => $this->data];
     }
 }

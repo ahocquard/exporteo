@@ -15,26 +15,28 @@ final class PriceValue implements Value
     /** @var ?string */
     private $channelCode;
 
-    /** @var string */
-    private $currency;
-
     /** @var mixed */
     private $data;
 
     /** @var string */
-    private $header;
+    private $headers;
 
-    public function __construct(string $attributeCode, ?string $localeCode, ?string$channelCode, string $currency, $data)
+    private $dataAsArray;
+
+    public function __construct(string $attributeCode, ?string $localeCode, ?string$channelCode, $data)
     {
         $this->attributeCode = $attributeCode;
         $this->localeCode = $localeCode;
         $this->channelCode = $channelCode;
-        $this->currency = $currency;
 
-        $localeCodesForHeader = $localeCode !== null ? "-$localeCode" : "";
-        $channelCodeForHeader = $channelCode !== null ? "-$channelCode" : "";
+        $localeCodesForHeader = $localeCode !== null ? "-$localeCode" : '';
+        $channelCodeForHeader = $channelCode !== null ? "-$channelCode" : '';
 
-        $this->header = "{$this->attributeCode}{$localeCodesForHeader}{$channelCodeForHeader}{$currency}";
+        foreach ($data as ['amount' => $amount, 'currency' => $currency]) {
+            $header = "{$this->attributeCode}{$localeCodesForHeader}{$channelCodeForHeader}-{$currency}";
+            $this->headers[] = $header;
+            $this->dataAsArray[$header] = $amount;
+        }
 
         $this->data = $data;
     }
@@ -54,11 +56,6 @@ final class PriceValue implements Value
         return $this->channelCode;
     }
 
-    public function currency(): string
-    {
-        return $this->currency;
-    }
-
     public function data()
     {
         return $this->data;
@@ -66,11 +63,11 @@ final class PriceValue implements Value
 
     public function headers(): array
     {
-        return [$this->header];
+        return [$this->headers];
     }
 
     public function toArray(): array
     {
-        return [$this->header => $this->data];
+        return $this->dataAsArray;
     }
 }
