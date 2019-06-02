@@ -6,11 +6,11 @@ namespace App\Infrastructure\Persistence\Api\Product;
 
 use \Akeneo\Pim\ApiClient\Pagination\Page as AkeneoClientPage;
 use App\Domain\Model\Product\Product;
-use App\Domain\Model\Product\ProductList;
+use App\Domain\Model\Product\ProductCollection;
 
 final class Page implements \App\Domain\Model\Page
 {
-    /** @var ProductList */
+    /** @var ProductCollection */
     private $productList;
 
     /** @var AkeneoClientPage */
@@ -22,7 +22,7 @@ final class Page implements \App\Domain\Model\Page
     public function __construct(AkeneoClientPage $akeneoClientPage, ValueCollectionFactory $valueCollectionFactory)
     {
         $this->akeneoClientPage = $akeneoClientPage;
-        $this->productList = new ProductList();
+        $this->productList = new ProductCollection();
         $this->valueCollectionFactory = $valueCollectionFactory;
 
         foreach ($akeneoClientPage->getItems() as $item) {
@@ -30,7 +30,7 @@ final class Page implements \App\Domain\Model\Page
         }
     }
 
-    public function productList(): ProductList
+    public function productList(): ProductCollection
     {
         return $this->productList;
     }

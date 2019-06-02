@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application;
 
-use App\Domain\Model\Product\ProductList;
+use App\Domain\Model\Product\ProductCollection;
 use App\Domain\Model\ExportHeaders;
 use App\Domain\Query\GetProductList;
 use Concurrent\Task;
@@ -59,7 +59,7 @@ final class ExportProductsToCsvCommandHandler
     }
 
     private function transformAndWriteToCSV(): callable {
-        return function(ProductList $productList, string $flatFormatWriter, ExportHeaders $headers) {
+        return function(ProductCollection $productList, string $flatFormatWriter, ExportHeaders $headers) {
             $filesystem = new Filesystem();
 
             $headers->addHeaders(...$productList->headers());
@@ -97,7 +97,7 @@ final class ExportProductsToCsvCommandHandler
 
     }
 
-    private function unserializeProducts(string $serializedProduct): ProductList
+    private function unserializeProducts(string $serializedProduct): ProductCollection
     {
         return unserialize($serializedProduct);
     }

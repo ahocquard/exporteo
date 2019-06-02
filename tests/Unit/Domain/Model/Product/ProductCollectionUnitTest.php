@@ -6,17 +6,17 @@ namespace App\Tests\Unit\Domain\Model\Product;
 
 use App\Domain\Model\ExportHeaders;
 use App\Domain\Model\Product\Product;
-use App\Domain\Model\Product\ProductList;
+use App\Domain\Model\Product\ProductCollection;
 use App\Domain\Model\Product\Value\ScalarValue;
 use App\Domain\Model\Product\ValueCollection;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 
-class ProductListUnitTest extends TestCase
+class ProductCollectionUnitTest extends TestCase
 {
     public function test_it_transforms_as_array(): void
     {
-        $products = new ProductList(
+        $products = new ProductCollection(
             new Product('my_product_1', ['shoes', 'clothes'], new ValueCollection(
                     new ScalarValue('attribute_code_1', null, null, 'data_1'),
                     new ScalarValue('attribute_code_2', 'en_US', null, 'data_2'),
@@ -67,7 +67,7 @@ class ProductListUnitTest extends TestCase
 
     public function test_it_gets_csv_headers(): void
     {
-        $products = new ProductList(
+        $products = new ProductCollection(
             new Product('my_product_1', ['shoes', 'clothes'], new ValueCollection(
                 new ScalarValue('attribute_code_1', null, null, 'data_1'),
                 new ScalarValue('attribute_code_2', 'en_US', null, 'data_2'),

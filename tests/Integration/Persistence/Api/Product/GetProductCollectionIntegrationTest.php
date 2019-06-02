@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Persistence\Api\Product;
 
 use App\Domain\Model\Product\Product;
-use App\Domain\Model\Product\ProductList;
+use App\Domain\Model\Product\ProductCollection;
 use App\Domain\Model\Product\Value\ScalarValue;
 use App\Domain\Model\Product\ValueCollection;
-use App\Infrastructure\Persistence\Api\Product\GetProductList;
+use App\Infrastructure\Persistence\Api\Product\GetProductCollection;
 use Concurrent\Http\HttpServer;
 use Concurrent\Http\HttpServerConfig;
 use Nyholm\Psr7\Factory\Psr17Factory;
@@ -21,7 +21,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Concurrent\Network\TcpServer;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class GetProductListIntegrationTest extends KernelTestCase
+class GetProductCollectionIntegrationTest extends KernelTestCase
 {
     protected function setUp(): void
     {
@@ -32,10 +32,10 @@ class GetProductListIntegrationTest extends KernelTestCase
     public function test_it_get_connector_products(): void
     {
         /** @var \App\Domain\Query\GetProductList $getProducts */
-        $getProducts = static::$container->get(GetProductList::class);
+        $getProducts = static::$container->get(GetProductCollection::class);
         $page = $getProducts->fetchByPage('client', 'secret', 'admin', 'admin', 'http://127.0.0.1:8081');
 
-        Assert::assertEqualsCanonicalizing(new ProductList(
+        Assert::assertEqualsCanonicalizing(new ProductCollection(
             new Product(
                 'big_boot',
                 ['summer_collection', 'winter_boots'],

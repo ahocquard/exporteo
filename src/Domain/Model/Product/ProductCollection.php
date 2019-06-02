@@ -6,7 +6,7 @@ namespace App\Domain\Model\Product;
 
 use App\Domain\Model\ExportHeaders;
 
-final class ProductList
+final class ProductCollection
 {
     /** @var Product[] */
     private $products = [];

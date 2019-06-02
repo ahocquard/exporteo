@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Domain\Model;
 
-use App\Domain\Model\Product\ProductList;
+use App\Domain\Model\Product\ProductCollection;
 
 interface Page
 {
-    public function productList(): ProductList;
+    public function productList(): ProductCollection;
 
     public function nextPage(): Page;
 

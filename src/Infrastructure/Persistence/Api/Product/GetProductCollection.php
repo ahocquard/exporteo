@@ -13,7 +13,7 @@ use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 
-final class GetProductList implements \App\Domain\Query\GetProductList
+final class GetProductCollection implements \App\Domain\Query\GetProductList
 {
     /** @var RequestFactoryInterface */
     private $requestFactory;
