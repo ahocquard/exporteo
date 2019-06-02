@@ -37,7 +37,7 @@ class GetProductListIntegrationTest extends KernelTestCase
 
         //var_dump($page);
         Assert::assertEqualsCanonicalizing(new ProductList(
-            new Product('big_boot', ['summer_collection', 'winter_boots'], new ValueList(new ScalarValue('color', null, null, 'black'))),
+            new Product('big_boot', ['summer_collection', 'winter_boots'], new ValueList(new ScalarValue('name', null, null, 'Big boot'))),
             new Product('docks_red', ['winter_collection'], new ValueList()),
             new Product('small_boot', [], new ValueList()),
 
@@ -83,7 +83,23 @@ class GetProductListIntegrationTest extends KernelTestCase
                 if ($path == '/api/rest/v1/products') {
                     $response = $this->factory->createResponse();
                     $response = $response->withHeader('Content-Type', 'application/json');
-                    $response = $response->withBody($this->factory->createStream($this->test->getFirstPage('http://127.0.0.1:8081')));
+                    $response = $response->withBody($this->factory->createStream($this->test->getFirstProductPage('http://127.0.0.1:8081')));
+
+                    return $response;
+                }
+
+                if ($path == '/api/rest/v1/attributes/color') {
+                    $response = $this->factory->createResponse();
+                    $response = $response->withHeader('Content-Type', 'application/json');
+                    $response = $response->withBody($this->factory->createStream($this->test->getColorAttribute()));
+
+                    return $response;
+                }
+
+                if ($path == '/api/rest/v1/attributes/name') {
+                    $response = $this->factory->createResponse();
+                    $response = $response->withHeader('Content-Type', 'application/json');
+                    $response = $response->withBody($this->factory->createStream($this->test->getNameAttribute()));
 
                     return $response;
                 }
@@ -106,7 +122,7 @@ JSON;
     }
 
 
-    public function getFirstPage(string $baseUri)
+    public function getFirstProductPage(string $baseUri)
     {
         return <<<JSON
         {
@@ -142,6 +158,11 @@ JSON;
         						"locale": null,
         						"scope": null,
         						"data": "black"
+        					}],
+                            "name": [{
+        						"locale": null,
+        						"scope": null,
+        						"data": "Big boot"
         					}]
         				}
         			},
@@ -181,5 +202,84 @@ JSON;
         	}
         }
 JSON;
+    }
+
+    public function getColorAttribute()
+    {
+        return <<<JSON
+            {
+                "code": "color",
+                "type": "pim_catalog_simpleselect",
+                "group": "product",
+                "unique": false,
+                "s": true,
+                "allowed_extensions": [],
+                "metric_family": null,
+                "default_metric_unit": null,
+                "reference_data_name": null,
+                "available_locales": [],
+                "max_characters": null,
+                "validation_rule": null,
+                "validation_regexp": null,
+                "wysiwyg_enabled": null,
+                "number_min": null,
+                "number_max": null,
+                "decimals_allowed": null,
+                "negative_allowed": null,
+                "date_min": null,
+                "date_max": null,
+                "max_file_size": null,
+                "minimum_input_length": null,
+                "sort_order": 1,
+                "localizable": false,
+                "scopable": false,
+                "labels": {
+                    "de_DE": "Color",
+                    "en_US": "Color",
+                    "fr_FR": "Couleur"
+                },
+                "auto_option_sorting": false
+            }
+JSON;
+    }
+
+    public function getNameAttribute()
+    {
+        return <<<JSON
+          {
+            "code": "name",
+            "type": "pim_catalog_text",
+            "group": "marketing",
+            "unique": false,
+            "useable_as_grid_filter": true,
+            "allowed_extensions": [],
+            "metric_family": null,
+            "default_metric_unit": null,
+            "reference_data_name": null,
+            "available_locales": [],
+            "max_characters": null,
+            "validation_rule": null,
+            "validation_regexp": null,
+            "wysiwyg_enabled": null,
+            "number_min": null,
+            "number_max": null,
+            "decimals_allowed": null,
+            "negative_allowed": null,
+            "date_min": null,
+            "date_max": null,
+            "max_file_size": null,
+            "minimum_input_length": null,
+            "sort_order": 2,
+            "localizable": false,
+            "scopable": false,
+            "labels": {
+                "de_DE": "Name",
+                "en_US": "Name",
+                "fr_FR": "Nom"
+            },
+            "auto_option_sorting": null
+        }
+JSON;
+
     }
 }

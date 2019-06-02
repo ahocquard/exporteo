@@ -50,7 +50,7 @@ final class GetProductList implements \App\Domain\Query\GetProductList
         );
 
         $page = $client->getProductApi()->listPerPage(100, true, ['pagination_type' => 'search_after']);
-        $valueCollectionFactory = new ValueCollectionFactory();
+        $valueCollectionFactory = new ValueCollectionFactory($client->getAttributeApi());
 
         return new Page($page, $valueCollectionFactory);
     }
