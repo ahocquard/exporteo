@@ -16,7 +16,7 @@ final class ValueList
         $this->values = $values;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         if (empty($this->values)) {
             return [];
@@ -24,13 +24,13 @@ final class ValueList
 
         $valuesAsArray = [];
         foreach ($this->values as $value) {
-            $valuesAsArray[] = $value->toArray();
+            $valuesAsArray[$value->header()] = $value->data();
         }
 
-        return array_merge(... $valuesAsArray);
+        return $valuesAsArray;
     }
 
-    public function headers()
+    public function headers(): array
     {
         $headers = [];
         foreach ($this->values as $value) {

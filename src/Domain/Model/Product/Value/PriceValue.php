@@ -15,6 +15,7 @@ final class PriceValue implements Value
     /** @var ?string */
     private $channelCode;
 
+    /** @var string */
     private $currency;
 
     /** @var mixed */
