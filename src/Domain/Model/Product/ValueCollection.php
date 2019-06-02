@@ -6,7 +6,7 @@ namespace App\Domain\Model\Product;
 
 use App\Domain\Model\Product\Value\Value;
 
-final class ValueList
+final class ValueCollection
 {
     /** @var Value[] */
     private $values;

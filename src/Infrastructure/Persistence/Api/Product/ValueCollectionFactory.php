@@ -7,7 +7,7 @@ namespace App\Infrastructure\Persistence\Api\Product;
 use Akeneo\Pim\ApiClient\Api\AttributeApiInterface;
 use App\Domain\Model\Product\Value\ArrayValue;
 use App\Domain\Model\Product\Value\ScalarValue;
-use App\Domain\Model\Product\ValueList;
+use App\Domain\Model\Product\ValueCollection;
 
 final class ValueCollectionFactory
 {
@@ -57,9 +57,9 @@ final class ValueCollectionFactory
      * ]
      *
      *
-     * @return ValueList
+     * @return ValueCollection
      */
-    public function fromApiFormat(array $apiFormatValues): ValueList
+    public function fromApiFormat(array $apiFormatValues): ValueCollection
     {
         $values = [];
         foreach ($apiFormatValues as $attributeCode => $valuesForAttribute) {
@@ -76,6 +76,6 @@ final class ValueCollectionFactory
             }
         }
 
-        return new ValueList(...$values);
+        return new ValueCollection(...$values);
     }
 }

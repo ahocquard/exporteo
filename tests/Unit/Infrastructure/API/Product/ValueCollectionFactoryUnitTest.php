@@ -6,7 +6,7 @@ namespace App\Tests\Unit\Domain\Model\Product;
 
 use Akeneo\Pim\ApiClient\Api\AttributeApiInterface;
 use App\Domain\Model\Product\Value\ScalarValue;
-use App\Domain\Model\Product\ValueList;
+use App\Domain\Model\Product\ValueCollection;
 use App\Infrastructure\Persistence\Api\Product\ValueCollectionFactory;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
@@ -30,7 +30,7 @@ class ValueCollectionFactoryUnitTest extends TestCase
 
         $valueCollectionFactory = new ValueCollectionFactory($attributeApi->reveal());
         Assert::assertEqualsCanonicalizing(
-            new ValueList(
+            new ValueCollection(
                 new ScalarValue('text', null, null, 'text_value'),
                 new ScalarValue('textarea', 'en_US', 'tablet', 'textarea_value'),
                 new ScalarValue('file', null, null, 'file_code'),

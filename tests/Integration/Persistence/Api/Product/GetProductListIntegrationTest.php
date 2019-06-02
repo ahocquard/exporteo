@@ -7,7 +7,7 @@ namespace App\Tests\Integration\Persistence\Api\Product;
 use App\Domain\Model\Product\Product;
 use App\Domain\Model\Product\ProductList;
 use App\Domain\Model\Product\Value\ScalarValue;
-use App\Domain\Model\Product\ValueList;
+use App\Domain\Model\Product\ValueCollection;
 use App\Infrastructure\Persistence\Api\Product\GetProductList;
 use Concurrent\Http\HttpServer;
 use Concurrent\Http\HttpServerConfig;
@@ -39,13 +39,13 @@ class GetProductListIntegrationTest extends KernelTestCase
             new Product(
                 'big_boot',
                 ['summer_collection', 'winter_boots'],
-                new ValueList(
+                new ValueCollection(
                     new ScalarValue('color', null, null, 'black'),
                     new ScalarValue('name', null, null, 'Big boot'),
                 )
             ),
-            new Product('docks_red', ['winter_collection'], new ValueList()),
-            new Product('small_boot', [], new ValueList()),
+            new Product('docks_red', ['winter_collection'], new ValueCollection()),
+            new Product('small_boot', [], new ValueCollection()),
 
         ), $page->productList());
     }

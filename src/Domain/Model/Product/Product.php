@@ -14,14 +14,14 @@ final class Product
     /** @var string[] */
     private $categories;
 
-    /** @var ValueList[] */
+    /** @var ValueCollection[] */
     private $values;
 
     /**
      * @param string   $identifier
      * @param string[] $categories
      */
-    public function __construct(string $identifier, array $categories, ValueList $values)
+    public function __construct(string $identifier, array $categories, ValueCollection $values)
     {
         $this->identifier = $identifier;
         $this->categories = (function(string ...$categories) {
