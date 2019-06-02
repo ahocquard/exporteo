@@ -7,7 +7,7 @@ namespace App\Tests\Unit\Domain\Model\Product;
 use App\Domain\Model\ExportHeaders;
 use App\Domain\Model\Product\Product;
 use App\Domain\Model\Product\ProductCollection;
-use App\Domain\Model\Product\Value\ArrayValue;
+use App\Domain\Model\Product\Value\ScalarCollectionValue;
 use App\Domain\Model\Product\Value\PriceValue;
 use App\Domain\Model\Product\Value\ScalarValue;
 use App\Domain\Model\Product\ValueCollection;
@@ -24,10 +24,10 @@ class ProductCollectionUnitTest extends TestCase
                     new ScalarValue('attribute_code_2', 'en_US', null, 'data_2'),
                     new ScalarValue('attribute_code_3', null, 'tablet', 'data_3'),
                     new ScalarValue('attribute_code_4', 'fr_FR', 'ecommerce', 'data_4'),
-                    new ArrayValue('attribute_code_5', null, null, ['foo', 'baz']),
-                    new ArrayValue('attribute_code_6', 'en_US', null, ['foo', 'baz']),
-                    new ArrayValue('attribute_code_7', null, 'tablet', ['foo', 'baz']),
-                    new ArrayValue('attribute_code_8', 'fr_FR', 'ecommerce', ['foo', 'baz']),
+                    new ScalarCollectionValue('attribute_code_5', null, null, ['foo', 'baz']),
+                    new ScalarCollectionValue('attribute_code_6', 'en_US', null, ['foo', 'baz']),
+                    new ScalarCollectionValue('attribute_code_7', null, 'tablet', ['foo', 'baz']),
+                    new ScalarCollectionValue('attribute_code_8', 'fr_FR', 'ecommerce', ['foo', 'baz']),
                     new PriceValue('attribute_code_9', null, null,
                         [
                             ['amount' => '45.00', 'currency' => 'USD'],
@@ -142,10 +142,10 @@ class ProductCollectionUnitTest extends TestCase
                     new ScalarValue('attribute_code_2', 'en_US', null, 'data_2'),
                     new ScalarValue('attribute_code_3', null, 'tablet', 'data_3'),
                     new ScalarValue('attribute_code_4', 'fr_FR', 'ecommerce', 'data_4'),
-                    new ArrayValue('attribute_code_5', null, null, ['foo', 'baz']),
-                    new ArrayValue('attribute_code_6', 'en_US', null, ['foo', 'baz']),
-                    new ArrayValue('attribute_code_7', null, 'tablet', ['foo', 'baz']),
-                    new ArrayValue('attribute_code_8', 'fr_FR', 'ecommerce', ['foo', 'baz']),
+                    new ScalarCollectionValue('attribute_code_5', null, null, ['foo', 'baz']),
+                    new ScalarCollectionValue('attribute_code_6', 'en_US', null, ['foo', 'baz']),
+                    new ScalarCollectionValue('attribute_code_7', null, 'tablet', ['foo', 'baz']),
+                    new ScalarCollectionValue('attribute_code_8', 'fr_FR', 'ecommerce', ['foo', 'baz']),
                 ),
             ),
             new Product('my_product_2', [], new ValueCollection())

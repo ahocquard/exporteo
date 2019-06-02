@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Model\Product\Value;
 
-final class ArrayValue implements Value
+final class ScalarCollectionValue implements Value
 {
     /** @var string */
     private $attributeCode;
