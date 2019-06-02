@@ -5,11 +5,16 @@ declare(strict_types=1);
 namespace App\Infrastructure\API\Product;
 
 use Akeneo\Pim\ApiClient\Api\AttributeApiInterface;
-use App\Domain\Model\Product\Value\TextValue;
+use App\Domain\Model\Product\Value\ScalarValue;
 use App\Domain\Model\Product\ValueList;
 
 final class ValueCollectionFactory
 {
+    private const SCALAR_TYPES = [
+        'pim_catalog_text',
+        'pim_catalog_textarea'
+    ];
+
     /** @var AttributeApiInterface */
     private $attributeApiClient;
 
@@ -41,8 +46,8 @@ final class ValueCollectionFactory
             $attribute = $this->attributeApiClient->get($attributeCode);
 
             foreach ($valuesForAttribute as $value) {
-                if (in_array($attribute['type'], ['pim_catalog_text', 'pim_catalog_textarea'])) {
-                    $values[] = new TextValue($attributeCode, $value['locale'], $value['scope'], $value['data']);
+                if (in_array($attribute['type'], self::SCALAR_TYPES)) {
+                    $values[] = new ScalarValue($attributeCode, $value['locale'], $value['scope'], $value['data']);
                 }
             }
         }

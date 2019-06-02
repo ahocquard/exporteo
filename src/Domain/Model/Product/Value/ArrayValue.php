@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace App\Domain\Model\Product\Value;
 
-abstract class AbstractValue implements Value
+final class ArrayValue implements Value
 {
     /** @var string */
-    protected $attributeCode;
+    private $attributeCode;
 
     /** @var ?string */
-    protected $localeCode;
+    private $localeCode;
 
     /** @var ?string */
-    protected $channelCode;
+    private $channelCode;
 
     /** @var mixed */
-    protected $data;
+    private $data;
 
     /** @var string */
-    protected $header;
+    private $header;
 
     public function __construct(string $attributeCode, ?string $localeCode, ?string$channelCode, $data)
     {
@@ -58,5 +58,10 @@ abstract class AbstractValue implements Value
     public function header(): string
     {
         return $this->header;
+    }
+
+    public function toArray(): array
+    {
+        return [$this->header => implode(',', $this->data)];
     }
 }

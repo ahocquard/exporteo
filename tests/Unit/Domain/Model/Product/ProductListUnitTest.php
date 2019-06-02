@@ -7,7 +7,7 @@ namespace App\Tests\Unit\Domain\Model\Product;
 use App\Domain\Model\ExportHeaders;
 use App\Domain\Model\Product\Product;
 use App\Domain\Model\Product\ProductList;
-use App\Domain\Model\Product\Value\TextValue;
+use App\Domain\Model\Product\Value\ScalarValue;
 use App\Domain\Model\Product\ValueList;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
@@ -18,10 +18,10 @@ class ProductListUnitTest extends TestCase
     {
         $products = new ProductList(
             new Product('my_product_1', ['shoes', 'clothes'], new ValueList(
-                    new TextValue('attribute_code_1', null, null, 'data_1'),
-                    new TextValue('attribute_code_2', 'en_US', null, 'data_2'),
-                    new TextValue('attribute_code_3', null, 'tablet', 'data_3'),
-                    new TextValue('attribute_code_4', 'fr_FR', 'ecommerce', 'data_4'),
+                    new ScalarValue('attribute_code_1', null, null, 'data_1'),
+                    new ScalarValue('attribute_code_2', 'en_US', null, 'data_2'),
+                    new ScalarValue('attribute_code_3', null, 'tablet', 'data_3'),
+                    new ScalarValue('attribute_code_4', 'fr_FR', 'ecommerce', 'data_4'),
                 ),
             ),
             new Product('my_product_2', [], new ValueList())
@@ -69,10 +69,10 @@ class ProductListUnitTest extends TestCase
     {
         $products = new ProductList(
             new Product('my_product_1', ['shoes', 'clothes'], new ValueList(
-                new TextValue('attribute_code_1', null, null, 'data_1'),
-                new TextValue('attribute_code_2', 'en_US', null, 'data_2'),
-                new TextValue('attribute_code_3', null, 'tablet', 'data_3'),
-                new TextValue('attribute_code_4', 'fr_FR', 'ecommerce', 'data_4'),
+                new ScalarValue('attribute_code_1', null, null, 'data_1'),
+                new ScalarValue('attribute_code_2', 'en_US', null, 'data_2'),
+                new ScalarValue('attribute_code_3', null, 'tablet', 'data_3'),
+                new ScalarValue('attribute_code_4', 'fr_FR', 'ecommerce', 'data_4'),
                 ),
             ),
             new Product('my_product_2', [], new ValueList())
