@@ -35,7 +35,6 @@ class GetProductListIntegrationTest extends KernelTestCase
         $getProducts = static::$container->get(GetProductList::class);
         $page = $getProducts->fetchByPage('client', 'secret', 'admin', 'admin', 'http://127.0.0.1:8081');
 
-        //var_dump($page);
         Assert::assertEqualsCanonicalizing(new ProductList(
             new Product('big_boot', ['summer_collection', 'winter_boots'], new ValueList(new ScalarValue('name', null, null, 'Big boot'))),
             new Product('docks_red', ['winter_collection'], new ValueList()),

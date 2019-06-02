@@ -37,6 +37,7 @@ final class ValueCollectionFactory
     {
         $values = [];
         foreach ($apiFormatValues as $attributeCode => $valuesForAttribute) {
+            // TODO: use dedicated query (don't mock what you don't own)
             $attribute = $this->attributeApiClient->get($attributeCode);
 
             foreach ($valuesForAttribute as $value) {

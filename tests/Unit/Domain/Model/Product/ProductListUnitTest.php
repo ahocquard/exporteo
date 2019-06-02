@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\Model\Product;
 
-use App\Domain\Model\ApiFormatProduct;
-use App\Domain\Model\ApiFormatProductsList;
 use App\Domain\Model\ExportHeaders;
 use App\Domain\Model\Product\Product;
 use App\Domain\Model\Product\ProductList;
