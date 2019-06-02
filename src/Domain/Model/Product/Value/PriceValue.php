@@ -64,9 +64,9 @@ final class PriceValue implements Value
         return $this->data;
     }
 
-    public function header(): string
+    public function headers(): array
     {
-        return $this->header;
+        return [$this->header];
     }
 
     public function toArray(): array

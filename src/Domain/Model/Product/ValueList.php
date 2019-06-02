@@ -24,19 +24,19 @@ final class ValueList
 
         $valuesAsArray = [];
         foreach ($this->values as $value) {
-            $valuesAsArray[$value->header()] = $value->data();
+            $valuesAsArray[] = $value->toArray();
         }
 
-        return $valuesAsArray;
+        return empty($valuesAsArray) ? [] : array_merge(...$valuesAsArray);
     }
 
     public function headers(): array
     {
         $headers = [];
         foreach ($this->values as $value) {
-            $headers[] = $value->header();
+            $headers[] = $value->headers();
         }
 
-        return $headers;
+        return empty($headers) ? [] : array_merge(...$headers);
     }
 }

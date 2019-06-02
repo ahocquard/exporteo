@@ -14,5 +14,7 @@ interface Value
 
     public function data();
 
-    public function header(): string;
+    public function headers(): array;
+
+    public function toArray(): array;
 }
