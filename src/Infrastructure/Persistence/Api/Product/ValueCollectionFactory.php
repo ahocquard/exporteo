@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\API\Product;
+namespace App\Infrastructure\Persistence\Api\Product;
 
 use Akeneo\Pim\ApiClient\Api\AttributeApiInterface;
 use App\Domain\Model\Product\Value\ArrayValue;

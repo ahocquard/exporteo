@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\API\Product;
+namespace App\Infrastructure\Persistence\Api\Product;
 
 use \Akeneo\Pim\ApiClient\Pagination\Page as AkeneoClientPage;
 use App\Domain\Model\Product\Product;
 use App\Domain\Model\Product\ProductList;
+use App\Infrastructure\Persistence\Api\Product\ValueCollectionFactory;
 
 final class Page implements \App\Domain\Model\Page
 {

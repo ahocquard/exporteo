@@ -7,7 +7,7 @@ namespace App\Tests\Unit\Domain\Model\Product;
 use Akeneo\Pim\ApiClient\Api\AttributeApiInterface;
 use App\Domain\Model\Product\Value\ScalarValue;
 use App\Domain\Model\Product\ValueList;
-use App\Infrastructure\API\Product\ValueCollectionFactory;
+use App\Infrastructure\Persistence\Api\Product\ValueCollectionFactory;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 

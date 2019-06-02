@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\API\Product;
+namespace App\Infrastructure\Persistence\Api\Product;
 
 use Akeneo\Pim\ApiClient\AkeneoPimClientBuilder;
+use App\Infrastructure\Persistence\Api\Product\Page;
+use App\Infrastructure\Persistence\Api\Product\ValueCollectionFactory;
 use Concurrent\Http\HttpClient;
 use Concurrent\Http\HttpClientConfig;
 use Psr\Http\Message\RequestFactoryInterface;

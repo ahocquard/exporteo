@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Domain\Model;
+namespace App\Tests\Integration\Persistence\Api\Product;
 
 use App\Domain\Model\Product\Product;
 use App\Domain\Model\Product\ProductList;
 use App\Domain\Model\Product\Value\ScalarValue;
 use App\Domain\Model\Product\ValueList;
-use App\Infrastructure\API\Product\GetProductList;
+use App\Infrastructure\Persistence\Api\Product\GetProductList;
 use Concurrent\Http\HttpServer;
 use Concurrent\Http\HttpServerConfig;
 use Nyholm\Psr7\Factory\Psr17Factory;
