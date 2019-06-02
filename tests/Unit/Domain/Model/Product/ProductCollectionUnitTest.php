@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Domain\Model\Product;
 use App\Domain\Model\ExportHeaders;
 use App\Domain\Model\Product\Product;
 use App\Domain\Model\Product\ProductCollection;
+use App\Domain\Model\Product\Value\ArrayValue;
 use App\Domain\Model\Product\Value\ScalarValue;
 use App\Domain\Model\Product\ValueCollection;
 use PHPUnit\Framework\Assert;
@@ -68,11 +69,18 @@ class ProductCollectionUnitTest extends TestCase
     public function test_it_gets_csv_headers(): void
     {
         $products = new ProductCollection(
-            new Product('my_product_1', ['shoes', 'clothes'], new ValueCollection(
-                new ScalarValue('attribute_code_1', null, null, 'data_1'),
-                new ScalarValue('attribute_code_2', 'en_US', null, 'data_2'),
-                new ScalarValue('attribute_code_3', null, 'tablet', 'data_3'),
-                new ScalarValue('attribute_code_4', 'fr_FR', 'ecommerce', 'data_4'),
+            new Product(
+                'my_product_1',
+                ['shoes', 'clothes'],
+                new ValueCollection(
+                    new ScalarValue('attribute_code_1', null, null, 'data_1'),
+                    new ScalarValue('attribute_code_2', 'en_US', null, 'data_2'),
+                    new ScalarValue('attribute_code_3', null, 'tablet', 'data_3'),
+                    new ScalarValue('attribute_code_4', 'fr_FR', 'ecommerce', 'data_4'),
+                    new ArrayValue('attribute_code_5', null, null, ['foo', 'baz']),
+                    new ArrayValue('attribute_code_6', 'en_US', null, ['foo', 'baz']),
+                    new ArrayValue('attribute_code_7', null, 'tablet', ['foo', 'baz']),
+                    new ArrayValue('attribute_code_8', 'fr_FR', 'ecommerce', ['foo', 'baz']),
                 ),
             ),
             new Product('my_product_2', [], new ValueCollection())
@@ -84,6 +92,10 @@ class ProductCollectionUnitTest extends TestCase
                 'attribute_code_2-en_US',
                 'attribute_code_3-tablet',
                 'attribute_code_4-fr_FR-ecommerce',
+                'attribute_code_5',
+                'attribute_code_6-en_US',
+                'attribute_code_7-tablet',
+                'attribute_code_8-fr_FR-ecommerce',
                 'categories',
                 'identifier'
             ],
