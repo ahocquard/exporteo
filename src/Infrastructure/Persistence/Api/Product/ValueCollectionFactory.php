@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence\Api\Product;
 
 use Akeneo\Pim\ApiClient\Api\AttributeApiInterface;
+use App\Domain\Model\Product\Value\MetricValue;
 use App\Domain\Model\Product\Value\ScalarCollectionValue;
 use App\Domain\Model\Product\Value\PriceValue;
 use App\Domain\Model\Product\Value\ScalarValue;
@@ -76,6 +77,9 @@ final class ValueCollectionFactory
                 }
                 else if ($attribute['type'] === self::PRICE_TYPE) {
                     $values[] = new PriceValue($attributeCode, $value['locale'], $value['scope'], $value['data']);
+                }
+                else if ($attribute['type'] === self::METRIC_TYPE) {
+                    $values[] = new MetricValue($attributeCode, $value['locale'], $value['scope'], $value['data']);
                 }
             }
         }

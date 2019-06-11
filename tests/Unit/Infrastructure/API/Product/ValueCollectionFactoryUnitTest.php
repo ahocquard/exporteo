@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Domain\Model\Product;
 
 use Akeneo\Pim\ApiClient\Api\AttributeApiInterface;
+use App\Domain\Model\Product\Value\MetricValue;
 use App\Domain\Model\Product\Value\ScalarValue;
 use App\Domain\Model\Product\ValueCollection;
 use App\Infrastructure\Persistence\Api\Product\ValueCollectionFactory;
@@ -27,6 +28,7 @@ class ValueCollectionFactoryUnitTest extends TestCase
         $attributeApi->get('number')->willReturn(['code' => 'number', 'type' => 'pim_catalog_number']);
         $attributeApi->get('boolean')->willReturn(['code' => 'boolean', 'type' => 'pim_catalog_boolean']);
         $attributeApi->get('reference_entity_simple_select')->willReturn(['code' => 'reference_entity_simple_select', 'type' => 'reference_entity_simple_select']);
+        $attributeApi->get('metric')->willReturn(['code' => 'metric', 'type' => 'pim_catalog_metric']);
 
         $valueCollectionFactory = new ValueCollectionFactory($attributeApi->reveal());
         Assert::assertEqualsCanonicalizing(
@@ -41,7 +43,7 @@ class ValueCollectionFactoryUnitTest extends TestCase
                 new ScalarValue('number', null, null, 1),
                 new ScalarValue('boolean', null, null, true),
                 new ScalarValue('reference_entity_simple_select', null, null, 'reference_entity_simple_select_value'),
-
+                new MetricValue('metric', null, null, ['amount' => '14', 'unit' => 'KILOWATT']),
             ),
             $valueCollectionFactory->fromApiFormat(
                 [
@@ -113,6 +115,13 @@ class ValueCollectionFactoryUnitTest extends TestCase
                             'locale' => null,
                             'scope' => null,
                             'data' => 'reference_entity_simple_select_value'
+                        ]
+                    ],
+                    'metric' => [
+                        [
+                            'locale' => null,
+                            'scope' => null,
+                            'data' => ['amount' => '14', 'unit' => 'KILOWATT']
                         ]
                     ],
                 ]
