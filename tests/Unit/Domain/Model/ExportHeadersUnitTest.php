@@ -27,12 +27,4 @@ class ExportHeadersUnitTest extends TestCase
 
         Assert::assertSame($headers->headers(), ['new_header_1', 'new_header_2']);
     }
-
-    public function test_it_sorts_headers(): void
-    {
-        $headers = new ExportHeaders();
-        $headers->addHeaders('new_header_2', 'new_header_1');
-
-        Assert::assertSame($headers->headers(), ['new_header_1', 'new_header_2']);
-    }
 }

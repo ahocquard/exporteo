@@ -17,10 +17,6 @@ final class Product
     /** @var ValueCollection[] */
     private $values;
 
-    /**
-     * @param string   $identifier
-     * @param string[] $categories
-     */
     public function __construct(string $identifier, array $categories, ValueCollection $values)
     {
         $this->identifier = $identifier;
@@ -37,7 +33,7 @@ final class Product
             'categories' => implode(',', $this->categories)
         ];
 
-        $properties = array_merge($headers->headersIndexedByKey(), $properties, $this->values->toArray());
+        $properties = array_merge(array_fill_keys($headers->headers(), null), $properties, $this->values->toArray());
         ksort($properties);
 
         return $properties;
@@ -46,6 +42,7 @@ final class Product
     public function headers(): array
     {
         $headers = ['identifier', 'categories'];
+
         return array_merge($headers, $this->values->headers());
     }
 }

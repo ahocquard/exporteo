@@ -19,19 +19,6 @@ final class ExportHeaders
 
     public function headers(): array
     {
-        sort($this->headers);
-
         return $this->headers;
-    }
-
-    public function headersIndexedByKey(): array
-    {
-        $headersIndexedByKey = [];
-        sort($this->headers);
-        foreach ($this->headers as $header) {
-            $headersIndexedByKey[$header] = null;
-        }
-
-        return $headersIndexedByKey;
     }
 }
