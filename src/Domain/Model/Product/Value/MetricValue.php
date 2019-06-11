@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Model\Product\Value;
 
-final class PriceValue implements Value
+final class MetricValue implements Value
 {
     /** @var string */
     private $attributeCode;
@@ -29,16 +29,21 @@ final class PriceValue implements Value
         $this->attributeCode = $attributeCode;
         $this->localeCode = $localeCode;
         $this->channelCode = $channelCode;
-        $this->headers = [];
 
         $localeCodesForHeader = $localeCode !== null ? "-$localeCode" : '';
         $channelCodeForHeader = $channelCode !== null ? "-$channelCode" : '';
 
-        foreach ($data as ['amount' => $amount, 'currency' => $currency]) {
-            $header = "{$this->attributeCode}{$localeCodesForHeader}{$channelCodeForHeader}-{$currency}";
-            $this->headers[] = $header;
-            $this->dataAsArray[$header] = $amount;
-        }
+        ['amount' => $amount, 'unit' => $unit] = $data;
+
+        $amountHeader = "{$this->attributeCode}{$localeCodesForHeader}{$channelCodeForHeader}";
+        $unitHeader = "{$this->attributeCode}{$localeCodesForHeader}{$channelCodeForHeader}-unit";
+
+        $this->headers = [$amountHeader, $unitHeader];
+
+        $this->dataAsArray = [
+            $amountHeader => $amount,
+            $unitHeader => $unit
+        ];
 
         $this->data = $data;
     }
