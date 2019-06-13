@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Domain\Model\Product;
 
 use Akeneo\Pim\ApiClient\Api\AttributeApiInterface;
 use App\Domain\Model\Product\Value\MetricValue;
+use App\Domain\Model\Product\Value\ScalarCollectionValue;
 use App\Domain\Model\Product\Value\ScalarValue;
 use App\Domain\Model\Product\ValueCollection;
 use App\Infrastructure\Persistence\Api\Product\ValueCollectionFactory;
@@ -24,6 +25,7 @@ class ValueCollectionFactoryUnitTest extends TestCase
         $attributeApi->get('image')->willReturn(['code' => 'image', 'type' => 'pim_catalog_image']);
         $attributeApi->get('date')->willReturn(['code' => 'date', 'type' => 'pim_catalog_date']);
         $attributeApi->get('simpleselect')->willReturn(['code' => 'simpleselect', 'type' => 'pim_catalog_simpleselect']);
+        $attributeApi->get('multiselect')->willReturn(['code' => 'multiselect', 'type' => 'pim_catalog_multiselect']);
         $attributeApi->get('reference_data_simpleselect')->willReturn(['code' => 'reference_data_simpleselect', 'type' => 'pim_catalog_reference_data_simpleselect']);
         $attributeApi->get('number')->willReturn(['code' => 'number', 'type' => 'pim_catalog_number']);
         $attributeApi->get('boolean')->willReturn(['code' => 'boolean', 'type' => 'pim_catalog_boolean']);
@@ -44,6 +46,7 @@ class ValueCollectionFactoryUnitTest extends TestCase
                 new ScalarValue('boolean', null, null, true),
                 new ScalarValue('reference_entity_simple_select', null, null, 'reference_entity_simple_select_value'),
                 new MetricValue('metric', null, null, ['amount' => '14', 'unit' => 'KILOWATT']),
+                new ScalarCollectionValue('multiselect', null, null, ['multiselect_value_1', 'multiselect_value_2']),
             ),
             $valueCollectionFactory->fromApiFormat(
                 [
@@ -122,6 +125,13 @@ class ValueCollectionFactoryUnitTest extends TestCase
                             'locale' => null,
                             'scope' => null,
                             'data' => ['amount' => '14', 'unit' => 'KILOWATT']
+                        ]
+                    ],
+                    'multiselect' => [
+                        [
+                            'locale' => null,
+                            'scope' => null,
+                            'data' => ['multiselect_value_1', 'multiselect_value_2']
                         ]
                     ],
                 ]
