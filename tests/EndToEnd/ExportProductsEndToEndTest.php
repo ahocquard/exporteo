@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Persistence\Api\Product;
 
-use App\Domain\Model\Product\Product;
-use App\Domain\Model\Product\ProductCollection;
-use App\Domain\Model\Product\Value\ScalarValue;
-use App\Domain\Model\Product\ValueCollection;
-use App\Infrastructure\Persistence\Api\Product\GetProductCollection;
+use App\Application\ExportProductsToCsvCommand;
+use App\Application\ExportProductsToCsvCommandHandler;
 use Concurrent\Http\HttpServer;
 use Concurrent\Http\HttpServerConfig;
 use Concurrent\Http\HttpServerListener;
@@ -22,7 +19,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Concurrent\Network\TcpServer;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class GetProductCollectionIntegrationTest extends KernelTestCase
+class ExportProductsEndToEndTest extends KernelTestCase
 {
     /** @var HttpServerListener */
     private $listener;
@@ -40,27 +37,40 @@ class GetProductCollectionIntegrationTest extends KernelTestCase
         $this->listener->join();
 
         parent::tearDown();
+
     }
 
-    public function test_it_get_connector_products(): void
+    public function test_it_creates_a_csv_file(): void
     {
-        /** @var \App\Domain\Query\GetProductList $getProducts */
-        $getProducts = static::$container->get(GetProductCollection::class);
-        $page = $getProducts->fetchByPage('client', 'secret', 'admin', 'admin', 'http://127.0.0.1:8081');
+        $command = new ExportProductsToCsvCommand(
+            'client',
+            'secret',
+            'admin',
+            'admin',
+            'http://127.0.0.1:8082/',
+            static::$kernel->getProjectDir() . '/var/test-files/export_categories.csv'
+        );
 
-        Assert::assertEqualsCanonicalizing(new ProductCollection(
-            new Product(
-                'big_boot',
-                ['summer_collection', 'winter_boots'],
-                new ValueCollection(
-                    new ScalarValue('color', null, null, 'black'),
-                    new ScalarValue('name', null, null, 'Big boot'),
-                )
-            ),
-            new Product('docks_red', ['winter_collection'], new ValueCollection()),
-            new Product('small_boot', [], new ValueCollection()),
+        $path = static::$kernel->getProjectDir() . '/var/test-files/export_categories.csv';
+        unlink($path);
 
-        ), $page->productList());
+        /** @var ExportProductsToCsvCommandHandler $handler*/
+        $handler = static::$container->get(ExportProductsToCsvCommandHandler::class);
+        $handler->handle($command);
+
+        Assert::assertTrue(file_exists($path), "No generated file '$path'");
+        $file = file_get_contents($path);
+
+        $expectedContent = <<<CSV
+categories,color,identifier,name
+"summer_collection,winter_boots",black,big_boot,"Big boot"
+winter_collection,,docks_red,
+,,small_boot,
+
+CSV;
+
+
+        Assert::assertSame($expectedContent, $file);
     }
 
     private function createServer(): void
@@ -102,7 +112,7 @@ class GetProductCollectionIntegrationTest extends KernelTestCase
                 if ($path == '/api/rest/v1/products') {
                     $response = $this->factory->createResponse();
                     $response = $response->withHeader('Content-Type', 'application/json');
-                    $response = $response->withBody($this->factory->createStream($this->test->getFirstProductPage('http://127.0.0.1:8081')));
+                    $response = $response->withBody($this->factory->createStream($this->test->getFirstProductPage('http://127.0.0.1:8082')));
 
                     return $response;
                 }
@@ -127,7 +137,7 @@ class GetProductCollectionIntegrationTest extends KernelTestCase
             }
         };
 
-        $this->listener = $server->run(TcpServer::listen('127.0.0.1', 8081), $handler);
+        $this->listener = $server->run(TcpServer::listen('127.0.0.1', 8082), $handler);
     }
 
     public function getAuthenticatedJson(): string

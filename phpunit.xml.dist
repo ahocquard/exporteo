@@ -15,11 +15,15 @@
 
     <testsuites>
         <testsuite name="unit">
-            <directory suffix="UnitTest.php">tests/Unit</directory>
+            <directory suffix="Test.php">tests/Unit</directory>
         </testsuite>
 
         <testsuite name="integration">
-            <directory suffix="IntegrationTest.php">tests/Integration</directory>
+            <directory suffix="Test.php">tests/Integration</directory>
+        </testsuite>
+
+        <testsuite name="end-to-end">
+            <directory suffix="Test.php">tests/EndToEnd</directory>
         </testsuite>
     </testsuites>
 
