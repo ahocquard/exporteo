@@ -21,7 +21,6 @@
         "webmozart/assert": "^1.4"
     },
     "require-dev": {
-        "behat/behat": "^3.5",
         "donatj/mock-webserver": "^2.0",
         "friends-of-behat/symfony-extension": "^2.0",
         "phpunit/phpunit": "^8.0"
