@@ -7,6 +7,8 @@ namespace App\Application;
 use App\Domain\Model\Product\ProductCollection;
 use App\Domain\Model\ExportHeaders;
 use App\Domain\Query\GetProductList;
+use App\Domain\Writer\ProductRepository;
+use App\Domain\Writer\ProductRepositoryFactory;
 use Concurrent\Task;
 use League\Csv\Writer;
 use Symfony\Component\Filesystem\Filesystem;
@@ -17,9 +19,13 @@ final class ExportProductsToCsvCommandHandler
     /** @var GetProductList */
     private $getApiFormatProductList;
 
-    public function __construct(GetProductList $getApiFormatProductList)
+    /** @var ProductRepositoryFactory */
+    private $productRepositoryFactory;
+
+    public function __construct(GetProductList $getApiFormatProductList, ProductRepositoryFactory $productRepositoryFactory)
     {
         $this->getApiFormatProductList = $getApiFormatProductList;
+        $this->productRepositoryFactory = $productRepositoryFactory;
     }
 
     public function handle(ExportProductsToCsvCommand $command)
@@ -33,14 +39,14 @@ final class ExportProductsToCsvCommandHandler
         );
 
         $headers = new ExportHeaders();
-        $flatFormatTemporaryFilepath = $this->createTemporaryFile();
+        $productRepository = $this->productRepositoryFactory->create();
 
         $tasks = [];
 
         $transformAndWriteToCSV = $this->transformAndWriteToCSV();
         if (!$productPage->hasNextPage()) {
-            $transformAndWriteToCSV($productPage->productList(), $flatFormatTemporaryFilepath, $headers);
-            $this->createCsvFile($flatFormatTemporaryFilepath, $headers, $command->pathToExport());
+            $transformAndWriteToCSV($productPage->productList(), $productRepository, $headers);
+            $this->createCsvFile($productRepository, $headers, $command->pathToExport());
 
             return;
         }
@@ -48,22 +54,20 @@ final class ExportProductsToCsvCommandHandler
         while($productPage->hasNextPage()) {
             $currentPage = $productPage;
             $productPage = $productPage->nextPage();
-            $tasks[] = Task::async($transformAndWriteToCSV, $currentPage->productList(), $flatFormatTemporaryFilepath, $headers);
+            $tasks[] = Task::async($transformAndWriteToCSV, $currentPage->productList(), $productRepository, $headers);
         }
 
         if (!empty($tasks)) {
             Task::await(all($tasks));
         }
 
-        $this->createCsvFile($flatFormatTemporaryFilepath, $headers, $command->pathToExport());
+        $this->createCsvFile($productRepository, $headers, $command->pathToExport());
     }
 
     private function transformAndWriteToCSV(): callable {
-        return function(ProductCollection $productList, string $flatFormatWriter, ExportHeaders $headers) {
-            $filesystem = new Filesystem();
-
-            $headers->addHeaders(...$productList->headers());
-            $filesystem->appendToFile($flatFormatWriter, serialize($productList) . PHP_EOL);
+        return function(ProductCollection $productCollection, ProductRepository $productRepository, ExportHeaders $headers) {
+            $headers->addHeaders(...$productCollection->headers());
+            $productRepository->persist($productCollection);
         };
     }
 
@@ -74,31 +78,21 @@ final class ExportProductsToCsvCommandHandler
         return $filesystem->tempnam('/tmp', 'exporteo_json_products_');
     }
 
-    private function createCsvFile(string $flatFormatTemporaryFilepath, ExportHeaders $exportHeaders, string $pathToExport): void
+    private function createCsvFile(ProductRepository $productRepository, ExportHeaders $exportHeaders, string $pathToExport): void
     {
         $temporaryFilePath = $this->createTemporaryFile();
         $writer = Writer::createFromPath($temporaryFilePath);
         $writer->insertOne($exportHeaders->headers());
 
-        $resource = fopen($flatFormatTemporaryFilepath, 'r');
+        $page = $productRepository->fetch();
+        do {
+            $writer->insertAll($page->productList()->toArray($exportHeaders));
 
-        $serializedProducts = stream_get_line($resource, 1000000, PHP_EOL);
-        while (false !== $serializedProducts) {
-            $products = $this->unserializeProducts($serializedProducts);
-            $writer->insertAll($products->toArray($exportHeaders));
+        } while ($page->hasNextPage() && $page = $page->nextPage());
 
-            $serializedProducts = stream_get_line($resource, 1000000, PHP_EOL);
-        }
 
         $filesystem = new Filesystem();
         $filesystem->copy($temporaryFilePath, $pathToExport);
         $filesystem->remove($temporaryFilePath);
-        $filesystem->remove($flatFormatTemporaryFilepath);
-
-    }
-
-    private function unserializeProducts(string $serializedProduct): ProductCollection
-    {
-        return unserialize($serializedProduct);
     }
 }
