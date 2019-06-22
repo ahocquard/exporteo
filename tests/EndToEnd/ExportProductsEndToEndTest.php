@@ -52,7 +52,7 @@ class ExportProductsEndToEndTest extends KernelTestCase
         );
 
         $path = static::$kernel->getProjectDir() . '/var/test-files/export_categories.csv';
-        unlink($path);
+        @unlink($path);
 
         /** @var ExportProductsToCsvCommandHandler $handler*/
         $handler = static::$container->get(ExportProductsToCsvCommandHandler::class);

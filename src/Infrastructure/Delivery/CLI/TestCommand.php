@@ -19,6 +19,14 @@ class TestCommand extends Command
 {
     protected static $defaultName = 'app:test';
 
+    /** @var ExportProductsToCsvCommandHandler */
+    private $commandHandler;
+
+    public function __construct(ExportProductsToCsvCommandHandler $commandHandler)
+    {
+        $this->commandHandler = $commandHandler;
+    }
+
     protected function configure()
     {
         $this
@@ -42,7 +50,6 @@ class TestCommand extends Command
             $input->getOption('uri'),
             $input->getOption('filepath')
         );
-        $commandHandler = new ExportProductsToCsvCommandHandler();
-        $commandHandler->handle($command);
+        $this->commandHandler->handle($command);
     }
 }
