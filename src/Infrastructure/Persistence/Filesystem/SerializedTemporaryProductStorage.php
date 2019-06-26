@@ -6,11 +6,11 @@ namespace App\Infrastructure\Persistence\Filesystem;
 
 
 use App\Domain\Model\Product\ProductCollection;
-use App\Domain\Writer\ProductRepository;
+use App\Domain\Writer\TemporaryProductStorage;
 use Symfony\Component\Filesystem\Filesystem;
 use Webmozart\Assert\Assert;
 
-final class SerializedProductRepository implements ProductRepository
+final class SerializedTemporaryProductStorage implements TemporaryProductStorage
 {
     /** @var string */
     private $filepath;

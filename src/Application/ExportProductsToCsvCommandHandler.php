@@ -7,8 +7,8 @@ namespace App\Application;
 use App\Domain\Model\Product\ProductCollection;
 use App\Domain\Model\ExportHeaders;
 use App\Domain\Query\GetProductList;
-use App\Domain\Writer\ProductRepository;
-use App\Domain\Writer\ProductRepositoryFactory;
+use App\Domain\Writer\TemporaryProductStorage;
+use App\Domain\Writer\TemporaryProductStorageFactory;
 use Concurrent\Task;
 use League\Csv\Writer;
 use Symfony\Component\Filesystem\Filesystem;
@@ -19,10 +19,10 @@ final class ExportProductsToCsvCommandHandler
     /** @var GetProductList */
     private $getApiFormatProductList;
 
-    /** @var ProductRepositoryFactory */
+    /** @var TemporaryProductStorageFactory */
     private $productRepositoryFactory;
 
-    public function __construct(GetProductList $getApiFormatProductList, ProductRepositoryFactory $productRepositoryFactory)
+    public function __construct(GetProductList $getApiFormatProductList, TemporaryProductStorageFactory $productRepositoryFactory)
     {
         $this->getApiFormatProductList = $getApiFormatProductList;
         $this->productRepositoryFactory = $productRepositoryFactory;
@@ -39,14 +39,14 @@ final class ExportProductsToCsvCommandHandler
         );
 
         $headers = new ExportHeaders();
-        $productRepository = $this->productRepositoryFactory->create();
+        $temporaryProductStorage = $this->productRepositoryFactory->create();
 
         $tasks = [];
 
         $transformAndWriteToCSV = $this->transformAndWriteToCSV();
         if (!$productPage->hasNextPage()) {
-            $transformAndWriteToCSV($productPage->productList(), $productRepository, $headers);
-            $this->createCsvFile($productRepository, $headers, $command->pathToExport());
+            $transformAndWriteToCSV($productPage->productList(), $temporaryProductStorage, $headers);
+            $this->createCsvFile($temporaryProductStorage, $headers, $command->pathToExport());
 
             return;
         }
@@ -54,33 +54,31 @@ final class ExportProductsToCsvCommandHandler
         while($productPage->hasNextPage()) {
             $currentPage = $productPage;
             $productPage = $productPage->nextPage();
-            $tasks[] = Task::async($transformAndWriteToCSV, $currentPage->productList(), $productRepository, $headers);
+            $tasks[] = Task::async($transformAndWriteToCSV, $currentPage->productList(), $temporaryProductStorage, $headers);
         }
 
         if (!empty($tasks)) {
             Task::await(all($tasks));
         }
 
-        $this->createCsvFile($productRepository, $headers, $command->pathToExport());
+        $this->createCsvFile($temporaryProductStorage, $headers, $command->pathToExport());
     }
 
     private function transformAndWriteToCSV(): callable {
-        return function(ProductCollection $productCollection, ProductRepository $productRepository, ExportHeaders $headers) {
+        return function(ProductCollection $productCollection, TemporaryProductStorage $productRepository, ExportHeaders $headers) {
             $headers->addHeaders(...$productCollection->headers());
             $productRepository->persist($productCollection);
         };
     }
 
-    private function createTemporaryFile(): string
+    /**
+     * TODO: put it in a service
+     */
+    private function createCsvFile(TemporaryProductStorage $productRepository, ExportHeaders $exportHeaders, string $pathToExport): void
     {
         $filesystem = new Filesystem();
+        $temporaryFilePath = $filesystem->tempnam('/tmp', 'exporteo_json_products_');
 
-        return $filesystem->tempnam('/tmp', 'exporteo_json_products_');
-    }
-
-    private function createCsvFile(ProductRepository $productRepository, ExportHeaders $exportHeaders, string $pathToExport): void
-    {
-        $temporaryFilePath = $this->createTemporaryFile();
         $writer = Writer::createFromPath($temporaryFilePath);
         $writer->insertOne($exportHeaders->headers());
 
@@ -91,7 +89,6 @@ final class ExportProductsToCsvCommandHandler
         } while ($page->hasNextPage() && $page = $page->nextPage());
 
 
-        $filesystem = new Filesystem();
         $filesystem->copy($temporaryFilePath, $pathToExport);
         $filesystem->remove($temporaryFilePath);
     }

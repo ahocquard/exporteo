@@ -17,7 +17,7 @@ use App\Domain\Model\Product\ProductCollection;
  *
  * TODO: check naming
  */
-interface ProductRepository
+interface TemporaryProductStorage
 {
     public function persist(ProductCollection $products): void;
 

@@ -9,7 +9,7 @@ use App\Domain\Model\Product\ProductCollection;
 use App\Domain\Model\Product\Value\ScalarValue;
 use App\Domain\Model\Product\ValueCollection;
 use App\Infrastructure\Persistence\Api\Product\GetProductCollection;
-use App\Infrastructure\Persistence\Filesystem\SerializedProductRepository;
+use App\Infrastructure\Persistence\Filesystem\SerializedTemporaryProductStorage;
 use Concurrent\Http\HttpServer;
 use Concurrent\Http\HttpServerConfig;
 use Concurrent\Http\HttpServerListener;
@@ -24,7 +24,7 @@ use Concurrent\Network\TcpServer;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
-class SerializedProductRepositoryIntegrationTest extends KernelTestCase
+class SerializedTemporaryProductStorageIntegrationTest extends KernelTestCase
 {
     protected function setUp(): void
     {
@@ -40,7 +40,7 @@ class SerializedProductRepositoryIntegrationTest extends KernelTestCase
     public function test_it_persists_serialized_products_in_a_file(): void
     {
         $filepath = static::$kernel->getProjectDir() . '/var/test-files/serialized_products.tmp';
-        $serializedProductRepository = new SerializedProductRepository($filepath);
+        $serializedProductRepository = new SerializedTemporaryProductStorage($filepath);
 
         $productsCollection1 = new ProductCollection(
             new Product(
@@ -68,7 +68,7 @@ class SerializedProductRepositoryIntegrationTest extends KernelTestCase
     public function test_it_reads_serialized_products_in_a_file(): void
     {
         $filepath = __DIR__ . '/serialized_products.expected';
-        $serializedProductRepository = new SerializedProductRepository($filepath);
+        $serializedProductRepository = new SerializedTemporaryProductStorage($filepath);
 
         $productsCollection1 = new ProductCollection(
             new Product(
@@ -101,7 +101,7 @@ class SerializedProductRepositoryIntegrationTest extends KernelTestCase
     public function test_it_reads_from_an_empty_file(): void
     {
         $filepath = __DIR__ . '/serialized_products_empty_file.test';
-        $serializedProductRepository = new SerializedProductRepository($filepath);
+        $serializedProductRepository = new SerializedTemporaryProductStorage($filepath);
 
         $page = $serializedProductRepository->fetch();
 
