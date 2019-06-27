@@ -29,12 +29,26 @@ final class SerializedTemporaryProductStorage implements TemporaryProductStorage
            $this->filesystem->appendToFile($this->filepath, serialize($products) . PHP_EOL);
     }
 
-    public function fetch(): \App\Domain\Model\Page
+    public function fetch(): iterable
     {
         $resource = fopen($this->filepath, 'r');
         Assert::true(is_resource($resource));
 
-        return new Page($resource);
+        $serializedProducts = stream_get_line($resource, 1000000, PHP_EOL);
+
+        while ($serializedProducts !== false) {
+            $unserializedProducts = $this->unserializeProducts($serializedProducts);
+
+            foreach ($unserializedProducts->products() as $product) {
+                yield $product;
+            }
+
+            $serializedProducts = stream_get_line($resource, 1000000, PHP_EOL);
+        }
     }
 
+    private function unserializeProducts(string $serializedProduct): ProductCollection
+    {
+        return unserialize($serializedProduct);
+    }
 }

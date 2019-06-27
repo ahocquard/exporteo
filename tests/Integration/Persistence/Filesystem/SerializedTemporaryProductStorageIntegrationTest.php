@@ -40,7 +40,7 @@ class SerializedTemporaryProductStorageIntegrationTest extends KernelTestCase
     public function test_it_persists_serialized_products_in_a_file(): void
     {
         $filepath = static::$kernel->getProjectDir() . '/var/test-files/serialized_products.tmp';
-        $serializedProductRepository = new SerializedTemporaryProductStorage($filepath);
+        $storage = new SerializedTemporaryProductStorage($filepath);
 
         $productsCollection1 = new ProductCollection(
             new Product(
@@ -56,8 +56,8 @@ class SerializedTemporaryProductStorageIntegrationTest extends KernelTestCase
         );
 
         $productsCollection2 = new ProductCollection(new Product('medium_boot', [], new ValueCollection()));
-        $serializedProductRepository->persist($productsCollection1);
-        $serializedProductRepository->persist($productsCollection2);
+        $storage->persist($productsCollection1);
+        $storage->persist($productsCollection2);
 
         $content = file_get_contents($filepath);
         $expectedContent = file_get_contents(__DIR__ . '/' . 'serialized_products.expected');
@@ -68,44 +68,35 @@ class SerializedTemporaryProductStorageIntegrationTest extends KernelTestCase
     public function test_it_reads_serialized_products_in_a_file(): void
     {
         $filepath = __DIR__ . '/serialized_products.expected';
-        $serializedProductRepository = new SerializedTemporaryProductStorage($filepath);
+        $storage = new SerializedTemporaryProductStorage($filepath);
 
-        $productsCollection1 = new ProductCollection(
-            new Product(
-                'big_boot',
-                ['summer_collection', 'winter_boots'],
-                new ValueCollection(
-                    new ScalarValue('color', null, null, 'black'),
-                    new ScalarValue('name', null, null, 'Big boot'),
-                    )
-            ),
-            new Product('docks_red', ['winter_collection'], new ValueCollection()),
-            new Product('small_boot', [], new ValueCollection()),
-            );
+        $product1 = new Product(
+            'big_boot',
+            ['summer_collection', 'winter_boots'],
+            new ValueCollection(
+                new ScalarValue('color', null, null, 'black'),
+                new ScalarValue('name', null, null, 'Big boot'),
+                )
+        );
 
-        $productsCollection2 = new ProductCollection(new Product('medium_boot', [], new ValueCollection()));
+        $product2 = new Product('docks_red', ['winter_collection'], new ValueCollection());
+        $product3 = new Product('small_boot', [], new ValueCollection());
+        $product4 = new Product('medium_boot', [], new ValueCollection());
 
-        $page = $serializedProductRepository->fetch();
-        Assert::assertTrue($page->hasNextPage());
-        Assert::assertEqualsCanonicalizing($productsCollection1, $page->productList());
+        $products = [];
+        array_push ($products, ...$storage->fetch()); // iterable_as_array
 
-        $page = $page->nextPage();
-        Assert::assertTrue($page->hasNextPage());
-        Assert::assertEqualsCanonicalizing($productsCollection2, $page->productList());
-
-        $page = $page->nextPage();
-        Assert::assertFalse($page->hasNextPage());
-        Assert::assertEqualsCanonicalizing(new ProductCollection(), $page->productList());
+        Assert::assertEqualsCanonicalizing([$product1, $product2, $product3, $product4], $products);
     }
 
     public function test_it_reads_from_an_empty_file(): void
     {
         $filepath = __DIR__ . '/serialized_products_empty_file.test';
-        $serializedProductRepository = new SerializedTemporaryProductStorage($filepath);
+        $storage = new SerializedTemporaryProductStorage($filepath);
 
-        $page = $serializedProductRepository->fetch();
+        $products = [];
+        array_push ($products, ...$storage->fetch()); // iterable_as_array
 
-        Assert::assertFalse($page->hasNextPage());
-        Assert::assertEqualsCanonicalizing(new ProductCollection(), $page->productList());
+        Assert::assertEqualsCanonicalizing([], $products);
     }
 }

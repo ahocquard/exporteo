@@ -52,7 +52,7 @@ final class ExportProductsToCsvCommandHandler
     /**
      * TODO: put it in a service
      */
-    private function createCsvFile(TemporaryProductStorage $productRepository, ExportHeaders $exportHeaders, string $pathToExport): void
+    private function createCsvFile(TemporaryProductStorage $temporaryProductStorage, ExportHeaders $exportHeaders, string $pathToExport): void
     {
         $filesystem = new Filesystem();
         $temporaryFilePath = $filesystem->tempnam('/tmp', 'exporteo_json_products_');
@@ -60,12 +60,9 @@ final class ExportProductsToCsvCommandHandler
         $writer = Writer::createFromPath($temporaryFilePath);
         $writer->insertOne($exportHeaders->headers());
 
-        $page = $productRepository->fetch();
-        do {
-            $writer->insertAll($page->productList()->toArray($exportHeaders));
-
-        } while ($page->hasNextPage() && $page = $page->nextPage());
-
+        foreach ($temporaryProductStorage->fetch() as $product) {
+            $writer->insertOne($product->toArray($exportHeaders));
+        };
 
         $filesystem->copy($temporaryFilePath, $pathToExport);
         $filesystem->remove($temporaryFilePath);

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\Writer;
 
-use App\Domain\Model\Page;
 use App\Domain\Model\Product\ProductCollection;
 
 /**
@@ -15,11 +14,10 @@ use App\Domain\Model\Product\ProductCollection;
  * For example, the last product can have a value of an attribute X that does not exist in any other product.
  * It means that we must generate the CSV file with this column corresponding to the attribute.
  *
- * TODO: check naming
  */
 interface TemporaryProductStorage
 {
     public function persist(ProductCollection $products): void;
 
-    public function fetch(): Page;
+    public function fetch(): iterable;
 }
