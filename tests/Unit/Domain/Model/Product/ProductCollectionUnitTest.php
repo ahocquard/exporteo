@@ -62,8 +62,8 @@ class ProductCollectionUnitTest extends TestCase
             new Product('my_product_2', [], new ValueCollection())
         );
 
-        $headers = new ExportHeaders();
-        $headers->addHeaders(
+        $headers = ExportHeaders::empty();
+        $headers = $headers->addHeaders(
             'identifier',
             'categories',
             'attribute_code_1',

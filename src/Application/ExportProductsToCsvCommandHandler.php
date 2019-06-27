@@ -38,11 +38,11 @@ final class ExportProductsToCsvCommandHandler
             $command->uri()
         );
 
-        $headers = new ExportHeaders();
+        $headers = ExportHeaders::empty();
         $temporaryProductStorage = $this->productRepositoryFactory->create();
 
         do {
-            $headers->addHeaders(...$productPage->productList()->headers());
+            $headers = $headers->addHeaders(...$productPage->productList()->headers());
             $temporaryProductStorage->persist($productPage->productList());
         } while ($productPage->hasNextPage() && $productPage = $productPage->nextPage());
 
