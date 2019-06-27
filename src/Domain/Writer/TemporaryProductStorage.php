@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Writer;
 
+use App\Domain\Model\ExportHeaders;
 use App\Domain\Model\Product\ProductCollection;
 
 /**
@@ -19,5 +20,5 @@ interface TemporaryProductStorage
 {
     public function persist(ProductCollection $products): void;
 
-    public function fetch(): iterable;
+    public function fetchWithAllHeaders(ExportHeaders $exportHeaders): iterable;
 }

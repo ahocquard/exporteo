@@ -60,7 +60,7 @@ final class ExportProductsToCsvCommandHandler
         $writer = Writer::createFromPath($temporaryFilePath);
         $writer->insertOne($exportHeaders->headers());
 
-        foreach ($temporaryProductStorage->fetch() as $product) {
+        foreach ($temporaryProductStorage->fetchWithAllHeaders($exportHeaders) as $product) {
             $writer->insertOne($product->toArray($exportHeaders));
         };
 

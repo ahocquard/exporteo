@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence\Filesystem;
 
 
+use App\Domain\Model\ExportHeaders;
 use App\Domain\Model\Product\ProductCollection;
 use App\Domain\Writer\TemporaryProductStorage;
 use Symfony\Component\Filesystem\Filesystem;
@@ -29,7 +30,7 @@ final class SerializedTemporaryProductStorage implements TemporaryProductStorage
            $this->filesystem->appendToFile($this->filepath, serialize($products) . PHP_EOL);
     }
 
-    public function fetch(): iterable
+    public function fetchWithAllHeaders(ExportHeaders $exportHeaders): iterable
     {
         $resource = fopen($this->filepath, 'r');
         Assert::true(is_resource($resource));

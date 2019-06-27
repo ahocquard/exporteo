@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Persistence\Api\Product;
 
+use App\Domain\Model\ExportHeaders;
 use App\Domain\Model\Product\Product;
 use App\Domain\Model\Product\ProductCollection;
 use App\Domain\Model\Product\Value\ScalarValue;
@@ -84,7 +85,7 @@ class SerializedTemporaryProductStorageIntegrationTest extends KernelTestCase
         $product4 = new Product('medium_boot', [], new ValueCollection());
 
         $products = [];
-        array_push ($products, ...$storage->fetch()); // iterable_as_array
+        array_push ($products, ...$storage->fetchWithAllHeaders(ExportHeaders::empty())); // iterable_as_array
 
         Assert::assertEqualsCanonicalizing([$product1, $product2, $product3, $product4], $products);
     }
@@ -95,7 +96,7 @@ class SerializedTemporaryProductStorageIntegrationTest extends KernelTestCase
         $storage = new SerializedTemporaryProductStorage($filepath);
 
         $products = [];
-        array_push ($products, ...$storage->fetch()); // iterable_as_array
+        array_push ($products, ...$storage->fetchWithAllHeaders(ExportHeaders::empty())); // iterable_as_array
 
         Assert::assertEqualsCanonicalizing([], $products);
     }
