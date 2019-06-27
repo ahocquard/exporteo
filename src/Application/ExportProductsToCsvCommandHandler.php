@@ -41,31 +41,12 @@ final class ExportProductsToCsvCommandHandler
         $headers = new ExportHeaders();
         $temporaryProductStorage = $this->productRepositoryFactory->create();
 
-        $tasks = [];
-
-        $transformAndWriteToCSV = $this->transformAndWriteToCSV();
-        if (!$productPage->hasNextPage()) {
-            $transformAndWriteToCSV($productPage->productList(), $temporaryProductStorage, $headers);
-            $this->createCsvFile($temporaryProductStorage, $headers, $command->pathToExport());
-
-            return;
-        }
-
-        while($productPage->hasNextPage()) {
-            $transformAndWriteToCSV($productPage->productList(), $temporaryProductStorage, $headers);
-
-            $productPage = $productPage->nextPage();
-
-        }
+        do {
+            $headers->addHeaders(...$productPage->productList()->headers());
+            $temporaryProductStorage->persist($productPage->productList());
+        } while ($productPage->hasNextPage() && $productPage = $productPage->nextPage());
 
         $this->createCsvFile($temporaryProductStorage, $headers, $command->pathToExport());
-    }
-
-    private function transformAndWriteToCSV(): callable {
-        return function(ProductCollection $productCollection, TemporaryProductStorage $productRepository, ExportHeaders $headers) {
-            $headers->addHeaders(...$productCollection->headers());
-            $productRepository->persist($productCollection);
-        };
     }
 
     /**
