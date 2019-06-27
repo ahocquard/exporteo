@@ -14,3 +14,7 @@
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
+
+###> ide  ###
+.idea
+###< ide  ###

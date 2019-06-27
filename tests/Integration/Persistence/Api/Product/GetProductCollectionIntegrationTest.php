@@ -64,7 +64,7 @@ class GetProductCollectionIntegrationTest extends KernelTestCase
 
     public function test_it_get_connector_products(): void
     {
-        /** @var \App\Domain\Query\GetProductList $getProducts */
+        /** @var \App\Domain\Query\GetProductCollection $getProducts */
         $getProducts = static::$container->get(GetProductCollection::class);
         $page = $getProducts->fetchByPage('client', 'secret', 'admin', 'admin', 'http://127.0.0.1:8081');
 

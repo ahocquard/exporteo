@@ -6,7 +6,7 @@ namespace App\Application;
 
 use App\Domain\Model\Product\ProductCollection;
 use App\Domain\Model\ExportHeaders;
-use App\Domain\Query\GetProductList;
+use App\Domain\Query\GetProductCollection;
 use App\Domain\Writer\TemporaryProductStorage;
 use App\Domain\Writer\TemporaryProductStorageFactory;
 use Concurrent\Task;
@@ -16,13 +16,13 @@ use function Concurrent\all;
 
 final class ExportProductsToCsvCommandHandler
 {
-    /** @var GetProductList */
+    /** @var GetProductCollection */
     private $getApiFormatProductList;
 
     /** @var TemporaryProductStorageFactory */
     private $productRepositoryFactory;
 
-    public function __construct(GetProductList $getApiFormatProductList, TemporaryProductStorageFactory $productRepositoryFactory)
+    public function __construct(GetProductCollection $getApiFormatProductList, TemporaryProductStorageFactory $productRepositoryFactory)
     {
         $this->getApiFormatProductList = $getApiFormatProductList;
         $this->productRepositoryFactory = $productRepositoryFactory;
