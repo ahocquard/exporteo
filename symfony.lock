@@ -41,6 +41,15 @@
             "tests/Behat/DemoContext.php"
         ]
     },
+    "guzzlehttp/guzzle": {
+        "version": "6.3.3"
+    },
+    "guzzlehttp/promises": {
+        "version": "v1.3.1"
+    },
+    "guzzlehttp/psr7": {
+        "version": "1.5.2"
+    },
     "league/csv": {
         "version": "9.2.0"
     },
@@ -73,6 +82,9 @@
     },
     "php-http/discovery": {
         "version": "1.6.1"
+    },
+    "php-http/guzzle6-adapter": {
+        "version": "v2.0.1"
     },
     "php-http/httplug": {
         "version": "v2.0.0"

@@ -6,38 +6,58 @@ namespace App\Tests\Integration\Persistence\Api\Product;
 
 use App\Application\ExportProductsToCsvCommand;
 use App\Application\ExportProductsToCsvCommandHandler;
-use Concurrent\Http\HttpServer;
-use Concurrent\Http\HttpServerConfig;
-use Concurrent\Http\HttpServerListener;
-use Nyholm\Psr7\Factory\Psr17Factory;
+use donatj\MockWebServer\MockWebServer;
+use donatj\MockWebServer\Response;
+use donatj\MockWebServer\ResponseStack;
 use PHPUnit\Framework\Assert;
-use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
-use Concurrent\Network\TcpServer;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ExportProductsEndToEndTest extends KernelTestCase
 {
-    /** @var HttpServerListener */
-    private $listener;
+    /** @var MockWebServer */
+    protected $server;
 
     protected function setUp(): void
     {
-        $this->createServer();
         self::bootKernel();
+
+        $this->server = new MockWebServer(8081, '127.0.0.1');
+
+        $this->server->start();
+        $this->server->setResponseOfPath(
+            '/api/oauth/v1/token',
+            new ResponseStack(
+                new Response($this->getAuthenticatedJson())
+            )
+        );
+
+        $this->server->setResponseOfPath(
+            '/api/rest/v1/products',
+            new ResponseStack(
+                new Response($this->getFirstProductPage('http://127.0.0.1:8081'))
+            )
+        );
+
+        $this->server->setResponseOfPath(
+            '/api/rest/v1/attributes/color',
+            new ResponseStack(
+                new Response($this->getColorAttribute())
+            )
+        );
+
+        $this->server->setResponseOfPath(
+            '/api/rest/v1/attributes/name',
+            new ResponseStack(
+                new Response($this->getNameAttribute())
+            )
+        );
     }
 
     // TODO: fix shutdown as it does not properly work
     protected function tearDown(): void
     {
-        $this->listener->shutdown();
-        $this->listener->join();
-
+        $this->server->stop();
         parent::tearDown();
-
     }
 
     public function test_it_creates_a_csv_file(): void
@@ -47,7 +67,7 @@ class ExportProductsEndToEndTest extends KernelTestCase
             'secret',
             'admin',
             'admin',
-            'http://127.0.0.1:8082/',
+            'http://127.0.0.1:8081/',
             static::$kernel->getProjectDir() . '/var/test-files/export_categories.csv'
         );
 
@@ -71,73 +91,6 @@ CSV;
 
 
         Assert::assertSame($expectedContent, $file);
-    }
-
-    private function createServer(): void
-    {
-        $factory = new Psr17Factory();
-        $server = new HttpServer(new HttpServerConfig($factory, $factory));
-
-        $handler = new class($factory, $this) implements RequestHandlerInterface {
-            private $factory;
-
-            private $test;
-
-            public function __construct(ResponseFactoryInterface $factory, TestCase $test) {
-                $this->factory = $factory;
-                $this->test = $test;
-            }
-
-            public function handle(ServerRequestInterface $request): ResponseInterface {
-                $path = rtrim(urldecode(preg_replace("'\?.*$'", '', $request->getRequestTarget())), '/');
-                if ($path === '/api/oauth/v1/token') {
-                    $header = $request->getHeader('Authorization')[0] ?? '';
-                    $body = json_decode($request->getBody()->getContents(), true);
-
-                    $expectedBody = [
-                        'grant_type' => 'password',
-                        'username' => 'admin',
-                        'password' => 'admin'
-                    ];
-
-                    if ($expectedBody === $body && 'Basic Y2xpZW50OnNlY3JldA==' === $header) {
-                        $response = $this->factory->createResponse();
-                        $response = $response->withHeader('Content-Type', 'application/json');
-                        $response = $response->withBody($this->factory->createStream($this->test->getAuthenticatedJson()));
-
-                        return $response;
-                    }
-                }
-
-                if ($path == '/api/rest/v1/products') {
-                    $response = $this->factory->createResponse();
-                    $response = $response->withHeader('Content-Type', 'application/json');
-                    $response = $response->withBody($this->factory->createStream($this->test->getFirstProductPage('http://127.0.0.1:8082')));
-
-                    return $response;
-                }
-
-                if ($path == '/api/rest/v1/attributes/color') {
-                    $response = $this->factory->createResponse();
-                    $response = $response->withHeader('Content-Type', 'application/json');
-                    $response = $response->withBody($this->factory->createStream($this->test->getColorAttribute()));
-
-                    return $response;
-                }
-
-                if ($path == '/api/rest/v1/attributes/name') {
-                    $response = $this->factory->createResponse();
-                    $response = $response->withHeader('Content-Type', 'application/json');
-                    $response = $response->withBody($this->factory->createStream($this->test->getNameAttribute()));
-
-                    return $response;
-                }
-
-                return $this->factory->createResponse(404);
-            }
-        };
-
-        $this->listener = $server->run(TcpServer::listen('127.0.0.1', 8082), $handler);
     }
 
     public function getAuthenticatedJson(): string

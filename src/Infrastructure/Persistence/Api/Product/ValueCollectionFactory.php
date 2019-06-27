@@ -37,6 +37,7 @@ final class ValueCollectionFactory
 
     private const METRIC_TYPE = 'pim_catalog_metric';
 
+    private $cache = [];
 
     /** @var AttributeApiInterface */
     private $attributeApiClient;
@@ -66,7 +67,9 @@ final class ValueCollectionFactory
         $values = [];
         foreach ($apiFormatValues as $attributeCode => $valuesForAttribute) {
             // TODO: use dedicated query (don't mock what you don't own)
-            $attribute = $this->attributeApiClient->get($attributeCode);
+            $attribute = $this->cache[$attributeCode] ?? $this->attributeApiClient->get($attributeCode);
+
+            $this->cache[$attribute['code']] = $attribute;
 
             foreach ($valuesForAttribute as $value) {
                 if (in_array($attribute['type'], self::SCALAR_TYPES)) {
