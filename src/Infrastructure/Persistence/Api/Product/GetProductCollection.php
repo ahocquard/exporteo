@@ -37,11 +37,6 @@ final class GetProductCollection implements \App\Domain\Query\GetProductList
     {
         $akeneoClientBuilder = new AkeneoPimClientBuilder($uri);
 
-        $akeneoClientBuilder
-            ->setHttpClient(new HttpClient(new HttpClientConfig($this->responseFactory)))
-            ->setRequestFactory($this->requestFactory)
-            ->setStreamFactory($this->streamFactory);
-
         $client = $akeneoClientBuilder->buildAuthenticatedByPassword(
             $client,
             $secret,

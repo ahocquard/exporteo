@@ -40,7 +40,6 @@ class TestCommand extends Command
 
     }
 
-    // TODO: use DI
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $command = new ExportProductsToCsvCommand(

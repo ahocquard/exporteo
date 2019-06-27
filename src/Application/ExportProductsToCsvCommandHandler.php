@@ -52,13 +52,10 @@ final class ExportProductsToCsvCommandHandler
         }
 
         while($productPage->hasNextPage()) {
-            $currentPage = $productPage;
-            $productPage = $productPage->nextPage();
-            $tasks[] = Task::async($transformAndWriteToCSV, $currentPage->productList(), $temporaryProductStorage, $headers);
-        }
+            $transformAndWriteToCSV($productPage->productList(), $temporaryProductStorage, $headers);
 
-        if (!empty($tasks)) {
-            Task::await(all($tasks));
+            $productPage = $productPage->nextPage();
+
         }
 
         $this->createCsvFile($temporaryProductStorage, $headers, $command->pathToExport());
