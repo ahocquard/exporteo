@@ -5,14 +5,13 @@ services:
         image: exporteo
         build:
             context: docker/php
-        environment:
-            COMPOSER_HOME: /home/docker/.composer
-            PHP_IDE_CONFIG: 'serverName=docker'
-            PHP_XDEBUG_ENABLED: "${PHP_XDEBUG_ENABLED:-0}"
-            PHP_XDEBUG_IDE_KEY: XDEBUG_IDE_KEY
-            XDEBUG_CONFIG: 'remote_host=${DOCKER_HOST_IP}'
-        user: docker
+
+#        environment:
+#            COMPOSER_HOME: /home/docker/.composer
+#            PHP_IDE_CONFIG: 'serverName=docker'
+#            PHP_XDEBUG_ENABLED: "${PHP_XDEBUG_ENABLED:-0}"
+#            PHP_XDEBUG_IDE_KEY: XDEBUG_IDE_KEY
+#            XDEBUG_CONFIG: 'remote_host=${DOCKER_HOST_IP}'
         volumes:
-            - ./:/home/docker/
-            - ~/.composer:/home/docker/.composer
-        working_dir: /home/docker/
+            - ./:/usr/src/app
+            - ~/.composer:/usr/src/app/.composer
