@@ -27,6 +27,8 @@ final class ExportHeaders
 
     public function headers(): array
     {
+        ksort($this->headers);
+
         return $this->headers;
     }
 }

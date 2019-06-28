@@ -27,7 +27,7 @@ final class SerializedTemporaryProductStorage implements TemporaryProductStorage
 
     public function persist(ProductCollection $products): void
     {
-           $this->filesystem->appendToFile($this->filepath, serialize($products) . PHP_EOL);
+           $this->filesystem->appendToFile($this->filepath, json_encode($products->toArray(ExportHeaders::empty())) . PHP_EOL);
     }
 
     public function fetchWithAllHeaders(ExportHeaders $exportHeaders): iterable
@@ -38,18 +38,21 @@ final class SerializedTemporaryProductStorage implements TemporaryProductStorage
         $serializedProducts = stream_get_line($resource, 1000000, PHP_EOL);
 
         while ($serializedProducts !== false) {
-            $unserializedProducts = $this->unserializeProducts($serializedProducts);
+            $unserializedProducts = $this->decodeProducts($serializedProducts);
 
-            foreach ($unserializedProducts->products() as $product) {
-                yield $product;
+            foreach ($unserializedProducts as $product) {
+                $data = array_merge(array_fill_keys($exportHeaders->headers(), null), $product);
+                ksort($data);
+
+                yield $data;
             }
 
             $serializedProducts = stream_get_line($resource, 1000000, PHP_EOL);
         }
     }
 
-    private function unserializeProducts(string $serializedProduct): ProductCollection
+    private function decodeProducts(string $serializedProduct): array
     {
-        return unserialize($serializedProduct);
+        return json_decode($serializedProduct, true);
     }
 }

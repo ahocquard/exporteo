@@ -61,7 +61,7 @@ final class ExportProductsToCsvCommandHandler
         $writer->insertOne($exportHeaders->headers());
 
         foreach ($temporaryProductStorage->fetchWithAllHeaders($exportHeaders) as $product) {
-            $writer->insertOne($product->toArray($exportHeaders));
+            $writer->insertOne($product);
         };
 
         $filesystem->copy($temporaryFilePath, $pathToExport);
