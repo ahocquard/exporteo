@@ -20,7 +20,14 @@ class ProductCollectionUnitTest extends TestCase
     public function test_it_transforms_as_array(): void
     {
         $products = new ProductCollection(
-            new Product('my_product_1', ['shoes', 'clothes'], new ValueCollection(
+            new Product(
+                'my_product_1',
+                'family_code',
+                'parent_code',
+                ['group_code_1', 'group_code_2'],
+                ['shoes', 'clothes'],
+                true,
+                new ValueCollection(
                     new ScalarValue('attribute_code_1', null, null, 'data_1'),
                     new ScalarValue('attribute_code_2', 'en_US', null, 'data_2'),
                     new ScalarValue('attribute_code_3', null, 'tablet', 'data_3'),
@@ -59,7 +66,7 @@ class ProductCollectionUnitTest extends TestCase
                     new MetricValue('attribute_code_16', 'fr_FR', 'ecommerce', ['amount' => '40.50', 'unit' => 'KILOWATT']),
                 ),
             ),
-            new Product('my_product_2', [], new ValueCollection())
+            new Product('my_product_2', null, null, [], [], false, new ValueCollection())
         );
 
         Assert::assertSame(
@@ -90,11 +97,19 @@ class ProductCollectionUnitTest extends TestCase
                     'attribute_code_9-EUR' => '50.50',
                     'attribute_code_9-USD' => '45.00',
                     'categories' => 'shoes,clothes',
+                    'enabled' => true,
+                    'family' => 'family_code',
+                    'groups' => 'group_code_1,group_code_2',
                     'identifier' => 'my_product_1',
+                    'parent' => 'parent_code'
                 ],
                 [
                     'categories' => '',
+                    'enabled' => false,
+                    'family' => null,
+                    'groups' => '',
                     'identifier' => 'my_product_2',
+                    'parent' => null
                 ]
             ],
             $products->toArray()
@@ -104,7 +119,14 @@ class ProductCollectionUnitTest extends TestCase
     public function test_it_gets_csv_headers(): void
     {
         $products = new ProductCollection(
-            new Product('my_product_1', ['shoes', 'clothes'], new ValueCollection(
+            new Product(
+                'my_product_1',
+                'family_code',
+                'parent_code',
+                ['group_code_1', 'group_code_2'],
+                ['shoes', 'clothes'],
+                true,
+                new ValueCollection(
                     new ScalarValue('attribute_code_1', null, null, 'data_1'),
                     new ScalarValue('attribute_code_2', 'en_US', null, 'data_2'),
                     new ScalarValue('attribute_code_3', null, 'tablet', 'data_3'),
@@ -141,9 +163,9 @@ class ProductCollectionUnitTest extends TestCase
                     new MetricValue('attribute_code_14', 'fr_FR', null, ['amount' => '20.50', 'unit' => 'KILOWATT']),
                     new MetricValue('attribute_code_15', null, 'ecommerce', ['amount' => '30.50', 'unit' => 'KILOWATT']),
                     new MetricValue('attribute_code_16', 'fr_FR', 'ecommerce', ['amount' => '40.50', 'unit' => 'KILOWATT']),
+                    ),
                 ),
-            ),
-            new Product('my_product_2', [], new ValueCollection())
+            new Product('my_product_2', null, null, [], [], false, new ValueCollection())
         );
 
         $expected = [
@@ -172,7 +194,11 @@ class ProductCollectionUnitTest extends TestCase
             'attribute_code_16-fr_FR-ecommerce',
             'attribute_code_16-fr_FR-ecommerce-unit',
             'categories',
+            'enabled',
+            'family',
+            'groups',
             'identifier',
+            'parent',
         ];
 
         $headers = $products->headers();

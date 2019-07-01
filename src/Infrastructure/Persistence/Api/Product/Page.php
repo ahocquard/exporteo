@@ -26,7 +26,17 @@ final class Page implements \App\Domain\Model\Page
         $this->valueCollectionFactory = $valueCollectionFactory;
 
         foreach ($akeneoClientPage->getItems() as $item) {
-            $this->productList = $this->productList->add(new Product($item['identifier'], $item['categories'], $this->valueCollectionFactory->fromApiFormat($item['values'])));
+            $this->productList = $this->productList->add(
+                new Product(
+                    $item['identifier'],
+                    $item['family'],
+                    $item['parent'],
+                    $item['groups'],
+                    $item['categories'],
+                    $item['enabled'],
+                    $this->valueCollectionFactory->fromApiFormat($item['values'])
+                )
+            );
         }
     }
 

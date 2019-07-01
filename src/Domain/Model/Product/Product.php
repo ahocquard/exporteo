@@ -9,18 +9,43 @@ final class Product
     /** @var string */
     private $identifier;
 
+    /** @var null|string */
+    private $familyCode;
+
+    /** @var null|string */
+    private $parentProductModelCode;
+
     /** @var string[] */
-    private $categories;
+    private $categoryCodes;
+
+    /** @var string[] */
+    private $groupCodes;
+
+    /** @var bool */
+    private $enabled;
 
     /** @var ValueCollection[] */
     private $values;
 
-    public function __construct(string $identifier, array $categories, ValueCollection $values)
-    {
+    public function __construct(
+        string $identifier,
+        ?string $familyCode,
+        ?string $parentProductModelCode,
+        array $groupCodes,
+        array $categoryCodes,
+        bool $enabled,
+        ValueCollection $values
+    ){
         $this->identifier = $identifier;
-        $this->categories = (function(string ...$categories) {
+        $this->familyCode = $familyCode;
+        $this->parentProductModelCode = $parentProductModelCode;
+        $this->groupCodes = (function(string ...$groupCode) {
+            return $groupCode;
+        })(...$groupCodes);
+        $this->categoryCodes = (function(string ...$categories) {
             return $categories;
-        })(...$categories);
+        })(...$categoryCodes);
+        $this->enabled = $enabled;
         $this->values = $values;
     }
 
@@ -28,7 +53,11 @@ final class Product
     {
         $properties = $this->values->toArray();
         $properties['identifier'] = $this->identifier;
-        $properties['categories'] = implode(',', $this->categories);
+        $properties['categories'] = implode(',', $this->categoryCodes);
+        $properties['enabled'] = $this->enabled;
+        $properties['groups'] = implode(',', $this->groupCodes);
+        $properties['parent'] = $this->parentProductModelCode;
+        $properties['family'] = $this->familyCode;
 
         ksort($properties);
 
@@ -37,7 +66,7 @@ final class Product
 
     public function headers(): array
     {
-        $headers = ['identifier', 'categories'];
+        $headers = ['identifier', 'categories', 'enabled', 'groups', 'parent', 'family'];
 
         return array_merge($headers, $this->values->headers());
     }

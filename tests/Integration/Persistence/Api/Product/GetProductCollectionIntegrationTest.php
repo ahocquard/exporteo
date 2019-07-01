@@ -71,14 +71,34 @@ class GetProductCollectionIntegrationTest extends KernelTestCase
         Assert::assertEqualsCanonicalizing(new ProductCollection(
             new Product(
                 'big_boot',
+                'boots',
+                'template_boots',
+                ['similar_boots'],
                 ['summer_collection', 'winter_boots'],
+                true,
                 new ValueCollection(
                     new ScalarValue('color', null, null, 'black'),
                     new ScalarValue('name', null, null, 'Big boot'),
                 )
             ),
-            new Product('docks_red', ['winter_collection'], new ValueCollection()),
-            new Product('small_boot', [], new ValueCollection()),
+            new Product(
+                'docks_red',
+                'boots',
+                null,
+                ['caterpillar_boots'],
+                ['winter_collection'],
+                true,
+                new ValueCollection()
+            ),
+            new Product(
+                'small_boot',
+                'boots',
+                null,
+                [],
+                [],
+                true,
+                new ValueCollection()
+            ),
 
         ), $page->productList());
     }
@@ -116,14 +136,10 @@ JSON;
         					}
         				},
         				"identifier": "big_boot",
+        				"parent": "template_boots",
         				"family": "boots",
-        				"groups": [
-        					"similar_boots"
-        				],
-        				"categories": [
-        					"summer_collection",
-        					"winter_boots"
-        				],
+        				"groups": ["similar_boots"],
+        				"categories": ["summer_collection", "winter_boots"],
         				"enabled": true,
         				"values": {
         					"color": [{
@@ -145,13 +161,10 @@ JSON;
         					}
         				},
         				"identifier": "docks_red",
+                        "parent": null,
         				"family": "boots",
-        				"groups": [
-        					"caterpillar_boots"
-        				],
-        				"categories": [
-        					"winter_collection"
-        				],
+        				"groups": ["caterpillar_boots"],
+        				"categories": ["winter_collection"],
         				"enabled": true,
         				"values": {}
         			},
@@ -162,10 +175,9 @@ JSON;
         					}
         				},
         				"identifier": "small_boot",
+                        "parent": null,
         				"family": "boots",
-        				"groups": [
-        					"similar_boots"
-        				],
+        				"groups": [],
         				"categories": [],
         				"enabled": true,
         				"values": {}
