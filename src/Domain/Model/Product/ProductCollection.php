@@ -29,12 +29,12 @@ final class ProductCollection
         return new self(...$products);
     }
 
-    public function toArray(ExportHeaders $headers): array
+    public function toArray(): array
     {
         $productsAsArray = [];
 
         foreach ($this->products as $product) {
-            $productsAsArray[] = $product->toArray($headers);
+            $productsAsArray[] = $product->toArray();
         }
 
         return $productsAsArray;

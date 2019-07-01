@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\Model\Product;
 
-use App\Domain\Model\ExportHeaders;
-
 final class Product
 {
     /** @var string */
@@ -26,14 +24,12 @@ final class Product
         $this->values = $values;
     }
 
-    public function toArray(ExportHeaders $headers): array
+    public function toArray(): array
     {
-        $properties = [
-            'identifier' => $this->identifier,
-            'categories' => implode(',', $this->categories)
-        ];
+        $properties = $this->values->toArray();
+        $properties['identifier'] = $this->identifier;
+        $properties['categories'] = implode(',', $this->categories);
 
-        $properties = array_merge(array_fill_keys($headers->headers(), null), $properties, $this->values->toArray());
         ksort($properties);
 
         return $properties;

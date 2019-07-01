@@ -62,39 +62,6 @@ class ProductCollectionUnitTest extends TestCase
             new Product('my_product_2', [], new ValueCollection())
         );
 
-        $headers = ExportHeaders::empty();
-        $headers = $headers->addHeaders(
-            'identifier',
-            'categories',
-            'attribute_code_1',
-            'attribute_code_2-en_US',
-            'attribute_code_3-tablet',
-            'attribute_code_4-fr_FR-ecommerce',
-            'attribute_code_5',
-            'attribute_code_6-en_US',
-            'attribute_code_7-tablet',
-            'attribute_code_8-fr_FR-ecommerce',
-            'attribute_code_9-USD',
-            'attribute_code_9-EUR',
-            'attribute_code_10-fr_FR-USD',
-            'attribute_code_10-fr_FR-EUR',
-            'attribute_code_11-ecommerce-USD',
-            'attribute_code_11-ecommerce-EUR',
-            'attribute_code_12-fr_FR-ecommerce-USD',
-            'attribute_code_12-fr_FR-ecommerce-EUR',
-            'attribute_code_13',
-            'attribute_code_13-unit',
-            'attribute_code_14-fr_FR',
-            'attribute_code_14-fr_FR-unit',
-            'attribute_code_15-ecommerce',
-            'attribute_code_15-ecommerce-unit',
-            'attribute_code_16-fr_FR-ecommerce',
-            'attribute_code_16-fr_FR-ecommerce-unit',
-            'attribute_code_extra',
-            'categories',
-            'identifier',
-        );
-
         Assert::assertSame(
             [
                 [
@@ -122,42 +89,15 @@ class ProductCollectionUnitTest extends TestCase
                     'attribute_code_8-fr_FR-ecommerce' => 'foo,baz',
                     'attribute_code_9-EUR' => '50.50',
                     'attribute_code_9-USD' => '45.00',
-
-                    'attribute_code_extra' => null,
                     'categories' => 'shoes,clothes',
                     'identifier' => 'my_product_1',
                 ],
                 [
-                    'attribute_code_1' => null,
-                    'attribute_code_10-fr_FR-EUR' => null,
-                    'attribute_code_10-fr_FR-USD' => null,
-                    'attribute_code_11-ecommerce-EUR' => null,
-                    'attribute_code_11-ecommerce-USD' => null,
-                    'attribute_code_12-fr_FR-ecommerce-EUR' => null,
-                    'attribute_code_12-fr_FR-ecommerce-USD' => null,
-                    'attribute_code_13' => null,
-                    'attribute_code_13-unit' => null,
-                    'attribute_code_14-fr_FR' => null,
-                    'attribute_code_14-fr_FR-unit' => null,
-                    'attribute_code_15-ecommerce' => null,
-                    'attribute_code_15-ecommerce-unit' => null,
-                    'attribute_code_16-fr_FR-ecommerce' => null,
-                    'attribute_code_16-fr_FR-ecommerce-unit' => null,
-                    'attribute_code_2-en_US' => null,
-                    'attribute_code_3-tablet' => null,
-                    'attribute_code_4-fr_FR-ecommerce' => null,
-                    'attribute_code_5' => null,
-                    'attribute_code_6-en_US' => null,
-                    'attribute_code_7-tablet' => null,
-                    'attribute_code_8-fr_FR-ecommerce' => null,
-                    'attribute_code_9-EUR' => null,
-                    'attribute_code_9-USD' => null,
-                    'attribute_code_extra' => null,
                     'categories' => '',
                     'identifier' => 'my_product_2',
                 ]
             ],
-            $products->toArray($headers)
+            $products->toArray()
         );
     }
 

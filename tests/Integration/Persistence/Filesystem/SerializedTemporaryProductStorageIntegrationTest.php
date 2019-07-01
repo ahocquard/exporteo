@@ -9,19 +9,8 @@ use App\Domain\Model\Product\Product;
 use App\Domain\Model\Product\ProductCollection;
 use App\Domain\Model\Product\Value\ScalarValue;
 use App\Domain\Model\Product\ValueCollection;
-use App\Infrastructure\Persistence\Api\Product\GetProductCollection;
 use App\Infrastructure\Persistence\Filesystem\SerializedTemporaryProductStorage;
-use Concurrent\Http\HttpServer;
-use Concurrent\Http\HttpServerConfig;
-use Concurrent\Http\HttpServerListener;
-use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\Assert;
-use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
-use Concurrent\Network\TcpServer;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -38,7 +27,7 @@ class SerializedTemporaryProductStorageIntegrationTest extends KernelTestCase
         }
     }
 
-    public function test_it_persists_serialized_products_in_a_file(): void
+    public function test_it_persists_products_as_flat_json_in_a_file(): void
     {
         $filepath = static::$kernel->getProjectDir() . '/var/test-files/serialized_products.tmp';
         $storage = new SerializedTemporaryProductStorage($filepath);
@@ -66,7 +55,7 @@ class SerializedTemporaryProductStorageIntegrationTest extends KernelTestCase
         Assert::assertSame($expectedContent, $content);
     }
 
-    public function test_it_reads_serialized_products_in_a_file(): void
+    public function test_it_reads_flat_products_in_a_file(): void
     {
         $filepath = __DIR__ . '/serialized_products.expected';
         $storage = new SerializedTemporaryProductStorage($filepath);
@@ -84,10 +73,48 @@ class SerializedTemporaryProductStorageIntegrationTest extends KernelTestCase
         $product3 = new Product('small_boot', [], new ValueCollection());
         $product4 = new Product('medium_boot', [], new ValueCollection());
 
-        $products = [];
-        array_push ($products, ...$storage->fetchWithAllHeaders(ExportHeaders::empty())); // iterable_as_array
+        $exportHeaders = ExportHeaders::empty();
+        $exportHeaders = $exportHeaders->addHeaders(
+            'categories',
+            'color',
+            'name',
+            'extra-property',
+            'identifier'
+        );
 
-        Assert::assertEqualsCanonicalizing([$product1, $product2, $product3, $product4], $products);
+        $products = [];
+        array_push ($products, ...$storage->fetchWithAllHeaders($exportHeaders)); // iterable_as_array
+
+        Assert::assertSame([
+            [
+                'categories' => 'summer_collection,winter_boots',
+	            'color' => 'black',
+                'extra-property' => null,
+                'identifier' => 'big_boot',
+	            'name' => 'Big boot'
+            ],
+            [
+                'categories' => 'winter_collection',
+                'color' => null,
+                'extra-property' => null,
+                'identifier' => 'docks_red',
+                'name' => null
+            ],
+            [
+                'categories' => '',
+                'color' => null,
+                'extra-property' => null,
+                'identifier' => 'small_boot',
+                'name' => null
+            ],
+            [
+                'categories' =>'',
+                'color' => null,
+                'extra-property' => null,
+                'identifier' => 'medium_boot',
+                'name' => null
+            ]
+        ], $products);
     }
 
     public function test_it_reads_from_an_empty_file(): void
